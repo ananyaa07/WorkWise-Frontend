@@ -1,0 +1,184 @@
+.App {
+  font: 400;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 2em;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.msg {
+  width: 100vw;
+}
+
+.steps {
+  width: 55%;
+}
+
+.steps li {
+  margin-top: 1em;
+}
+
+.hs .ant-modal {
+  backdrop-filter: blur(100px) !important;
+  height: 150px !important;
+}
+.hs .ant-input::placeholder {
+  color: #ffffffcc !important;
+}
+.hs .ant-modal-content {
+  background-color: #d9d9d94c !important;
+}
+.hs .ant-btn-primary {
+  background-color: #d9d9d97c !important;
+}
+.hs .ant-btn-default {
+  color: white !important;
+}
+.hs .ant-btn-default:hover {
+  border-color: #d9d9d97c !important;
+}
+.hs .ant-btn-primary:hover {
+  background-color: grey !important;
+}
+
+/* .anticon > svg {
+  fill: white;
+} */
+
+.tags::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.tags {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.bookmarkContainer-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+.bookmarkContainer-inactive {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-in-out, opacity 0.2s ease-in-out 0.3s !important;
+}
+.bookmarkContainer {
+  transition: transform 0.5s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* css for Quotes component */
+.quote__container {
+  margin: 38vh 0 20px 0;
+}
+
+/* .quote__bg {
+  background: rgba(175, 175, 175, 0.85);
+} */
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .quote__bg {
+    -webkit-backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(60px) !important;
+  }
+}
+
+.quote__text {
+  -webkit-animation: fadein 1.5s linear forwards;
+  animation: fadein 1.5s linear forwards;
+  font-size: 1.5rem; 
+  width: 50vw;
+}
+.quote__text--fadeout {
+  -webkit-animation: fadeout 1.5s linear forwards;
+  animation: fadeout 1.5s linear forwards;
+}
+
+.calendar-icon {
+  width: 2rem;
+  height: 2rem;
+}
+/* .ant-form-item-required  {
+  color: white !important;
+} */
+.ant-form-item-required::before{
+  display: none !important;
+}
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.calendar-position {
+  position: relative !important;
+  width: auto !important;
+  height: auto !important;
+}
+.calendar {
+  position: fixed;
+  right: 1%;
+  top: 27% !important;
+  width: 25%;
+}
+
+@media only screen and (max-width: 600px) {
+  .calendar {
+    position: fixed;
+    right: 1%;
+    top: 40% !important;
+    width: 70%;
+    height: 50%;
+  }
+}
+
+#settings-icon{
+  position: absolute;
+  left: 1rem;
+  height: 2rem;
+  width: 2rem;
+  bottom: 1rem;
+}
+
+.ant-btn-primary {
+  background-color: blue !important;
+}
+
+.font-title{
+ font-family: 'Exo 2', sans-serif;
+}

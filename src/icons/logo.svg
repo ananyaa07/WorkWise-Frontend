@@ -1,0 +1,7 @@
+<svg
+            className="h-16 w-[4rem] md:w-[3rem] loader-spin"
+            width="100%" height="100%" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M91.4062 0C108.75 0 120 11.25 120 28.5938V91.4062C120 108.75 108.75 120 91.4062 120H28.5938C11.25 120 0 108.75 0 91.4062V28.5938C0 11.25 11.25 0 28.5938 0H91.4062Z" fill="#222222"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M35.0782 86.5L44.5782 92.5L56.5782 72L74.0782 82.5L89.5782 54.5L100.578 61L96.5782 32L69.5782 43L80.0782 49L70.0782 67L52.5782 56.5L35.0782 86.5Z" fill="white"/>
+            <path d="M24.8651 67.2509L49.6539 82.3012L43.7888 91.9615L19 76.9111L24.8651 67.2509Z" fill="white"/>
+            </svg>
