@@ -8,14 +8,23 @@ import { useContext } from "react";
 import { Alert } from "antd";
 import image from "../icons/logo.png";
 import image2 from "../icons/photo2.jpg"
-import { FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 export default function Login() {
+  const CLIENT_ID=process.env.REACT_APP_GITHUB_CLIENT_ID
+  const CALLBACK_URL=process.env.REACT_APP_GITHUB_CALLBACK_URL
+  
   const navigate = useNavigate();
   const { baseUrl } = useContext(UserContext);
 
   const redirectToGoogleSSO = () => {
     const url = `${baseUrl}/auth/login/google`;
+    const newWindow = window.open(url, "_self");
+  };
+
+  const redirectToGithubAuth = async () => {
+    const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}`
+    
     const newWindow = window.open(url, "_self");
   };
 
@@ -77,6 +86,15 @@ export default function Login() {
                 >
                   <FaGoogle className="mr-2" />
                   Sign in with Google
+                </button>
+              </div>
+              <div className="mt-2">
+                <button
+                  className="flex items-center justify-center w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-black rounded-lg hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:ring focus:ring-gray-700 focus:ring-opacity-50"
+                  onClick={redirectToGithubAuth}
+                >
+                  <FaGithub className="mr-2" />
+                  Sign in with Github
                 </button>
               </div>
             </div>
