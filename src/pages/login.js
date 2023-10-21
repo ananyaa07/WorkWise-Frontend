@@ -17,11 +17,6 @@ export default function Login() {
   const navigate = useNavigate();
   const { baseUrl } = useContext(UserContext);
 
-  const redirectToGoogleSSO = () => {
-    const url = `${baseUrl}/auth/login/google`;
-    const newWindow = window.open(url, "_self");
-  };
-
   const redirectToGithubAuth = async () => {
     const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}`
     
@@ -77,17 +72,7 @@ export default function Login() {
                 Sign in or Register to access your account
               </p>
             </div>
-
             <div className="mt-8">
-              <div className="mt-6">
-                <button
-                  className="flex items-center justify-center w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
-                  onClick={redirectToGoogleSSO}
-                >
-                  <FaGoogle className="mr-2" />
-                  Sign in with Google
-                </button>
-              </div>
               <div className="mt-2">
                 <button
                   className="flex items-center justify-center w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-black rounded-lg hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:ring focus:ring-gray-700 focus:ring-opacity-50"

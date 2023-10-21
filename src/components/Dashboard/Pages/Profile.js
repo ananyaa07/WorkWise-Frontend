@@ -70,7 +70,7 @@ const Profile = () => {
                 </h3>
               </div>
               <div className="p-7">
-                <div className="h-36 full rounded-full flex justify-center">
+                <div className="h-36 w-36 flex justify-center items-center m-auto">
                   <div>
                     <img src={user.picture} alt="" />
                   </div>
@@ -128,7 +128,7 @@ const Profile = () => {
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
                     htmlFor="emailAddress"
                   >
-                    Email Address
+                    Username
                   </label>
                   <div className="relative">
                     <span className="absolute left-4.5 top-4">
@@ -161,8 +161,8 @@ const Profile = () => {
                       type="email"
                       name="emailAddress"
                       id="emailAddress"
-                      placeholder="devidjond45@gmail.com"
-                      defaultValue={user.email}
+                      placeholder="Email Address"
+                      defaultValue={user.username}
                       disabled="true"
                     />
                   </div>
