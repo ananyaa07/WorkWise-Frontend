@@ -114,7 +114,7 @@ export default function Time() {
 								setHovered(false);
 							}}
 						>
-							{hovered && (
+							{!hovered && (
 								<>
 									<CiTimer
 										onClick={() => {
