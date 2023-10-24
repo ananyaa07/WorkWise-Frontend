@@ -1,11 +1,16 @@
 import axios from "axios";
 import icon from "../icons/favicon.ico";
 import SItem from "./sidebar_item";
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useParams } from "react-router-dom";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
+import { Form, Radio, Space, Input, Button, Modal } from 'antd';
+import TextArea from "antd/es/input/TextArea";
+
 
 const Sidebar = () => {
   const params = useParams();
@@ -15,6 +20,15 @@ const Sidebar = () => {
   const [projects, setProjects] = useState([]);
   const [input, setInput] = useState("");
   const [showInput, setShowInput] = useState(false);
+
+
+const [open, setOpen] = useState(false);
+const [confirmLoading, setConfirmLoading] = useState(false);
+const [projectTitle, setProjectTitle] = useState("");
+const [projectDesc, setProjectDesc]=useState("");
+const [form] = Form.useForm();
+const [value, setValue] = useState(1);
+const [isPrivate, setisPrivate]=useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -40,16 +54,38 @@ const Sidebar = () => {
     }
   };
 
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleOk = async () => {
+    // console.log(isPrivate);
+    setConfirmLoading(true)
+    await createProject(projectTitle,projectDesc,isPrivate);
+    setConfirmLoading(false)
+    setOpen(false);
+   
+  };
+
+  const handleCancel = () => {
+    console.log('Clicked cancel button');
+    
+    setOpen(false);
+    
+  };
+
   const handleClick = (e) => {
+    showModal();  
     setShowInput(true);
   };
 
-  const createProject = async (name) => {
+  const createProject = async (name, desc) => {
     try {
       const response = await axios.post(
         `${baseUrl}/projects`,
         {
           name: name,
+          description : desc,
+          isPrivate: isPrivate
         },
         {
           headers: {
@@ -104,6 +140,11 @@ const Sidebar = () => {
     child[2].classList.add("hidden");
   };
 
+  const onChange=(e)=>{
+    console.log(e.target.value)
+      setProjectTitle(e.target.value);
+  }
+
   let themechange = (e) => {
     let x = document.querySelector(".themeslider");
     if (dark) {
@@ -124,12 +165,63 @@ const Sidebar = () => {
     setDark(!dark);
   };
 
+  const onRadioChange = (e) => {
+    console.log('radio checked', e.target.value);
+    setValue(e.target.value);
+    if(e.target.value==1)
+    setisPrivate(false);
+    else
+    setisPrivate(true);
+  };
+
+
   return (
 		<div
 			className="sidebar h-[100vh] w-[min(300px,33vw)] transition-all text-[min(4vw,30px)]
         shadow-md shadow-black fixed"
 			// onLoad={saved}
 		>
+             <Modal
+        title="Add project details"
+        open={open}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <Form
+                name="basic"
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 16 }}
+                initialValues={{ remember: true }}
+                autoComplete="off"
+                className="my-8"
+              >
+                <Form.Item label="Project Title" name="title">
+                  <Input
+                    onChange={(e) => setProjectTitle(e.target.value)}
+                    value={projectTitle}
+                    placeholder="Enter A Project Title"
+                  />
+                </Form.Item>
+
+
+                <Form.Item label="Description" name="desc">
+                  <TextArea
+                  onChange={(e) => setProjectDesc(e.target.value)}
+                  value={projectDesc}
+                    placeholder="Enter Project Description"
+                  />
+                </Form.Item>
+
+                <Radio.Group onChange={onRadioChange} value={value}>
+                  <Space direction="vertical">
+                    <Radio value={1}>Public</Radio>
+                    <Radio value={2}>Private</Radio>      
+                  </Space>
+              </Radio.Group>
+
+            </Form>
+      </Modal>
 			<div
 				className="font-bold  h-10 cursor-pointer font-title
             flex mt-8 w-4/5 ml-auto mr-auto select-none items-center
@@ -178,7 +270,7 @@ const Sidebar = () => {
 					<div
 						id="add_item"
 						className="cursor-pointer relative w-5 h-5 text-gray-300 mt-2 bg-gray-300 rounded-full flex items-center justify-center"
-						onClick={handleClick}
+						onClick={showModal}
 					>
 						<div className="h-1/2 border-[1px] border-gray-600 absolute"> </div>
 						<div className="w-1/2 border-[1px] border-gray-600 absolute"></div>

@@ -26,6 +26,7 @@ function Card(props) {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [form] = Form.useForm();
+  const [value, setValue] = useState(1);
 
   function getNames(objArray) {
     const names = [];
@@ -148,6 +149,12 @@ function Card(props) {
       </div>
     </>
   );
+
+
+  const onRadioChange = (e) => {
+    console.log('radio checked', e.target.value);
+    setValue(e.target.value);
+  };
 
   return (
     <Draggable draggableId={card._id} index={props.index}>
