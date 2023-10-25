@@ -141,7 +141,7 @@ function Card(props) {
             showModal();
           }}
         >
-          Edit
+         Put Comment
         </Button>
       </div>
     </>
@@ -228,7 +228,7 @@ function Card(props) {
 
             <Modal
               destroyOnClose={true}
-              title="Basic Modal"
+              title="Issue Modal"
               open={isModalOpen}
               // onOk={handleOk}
               onCancel={handleCancel}
@@ -243,101 +243,13 @@ function Card(props) {
                 autoComplete="off"
                 className="my-8"
               >
-                <Form.Item label="Card Title" name="title">
+                <Form.Item label="Comment" name="title">
                   <Input
-                    placeholder="Enter A Title"
-                    defaultValue={card.title}
+                    placeholder="Enter comments"
+                   
                   />
                 </Form.Item>
                 
-                <Form.Item
-                  label="Description"
-                  name="description"
-                  rules={[{ required: false }]}
-                >
-                  <Input
-                    placeholder="Enter a valid Description"
-                    defaultValue={card.description}
-                  />
-                </Form.Item>
-                <Form.Item label="Priority" name="priority">
-                  <Select
-                    showSearch
-                    placeholder="Select a person"
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    defaultValue={card.priority}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={[
-                      {
-                        value: "low",
-                        label: "Low",
-                      },
-                      {
-                        value: "medium",
-                        label: "Medium",
-                      },
-                      {
-                        value: "high",
-                        label: "High",
-                      },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Tag"
-                  name="tags"
-                  rules={[{ required: false }]}
-                >
-                  <Select
-                    mode="tags"
-                    style={{ width: "100%" }}
-                    defaultValue={tags}
-                    value={tags}
-                    onChange={handleTagChange}
-                    placeholder="Blog Tags"
-                    className="bg-white"
-                  ></Select>
-                </Form.Item>
-                <Form.Item
-                  label="Date"
-                  name="startDate"
-                  rules={[{ required: false }]}
-                >
-                  <DatePicker
-                    defaultValue={dayjs(card.startDate, dateFormat)}
-                    format={dateFormat}
-                    className="w-full"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Image"
-                  name="imageUrl"
-                  rules={[{ required: false }]}
-                >
-                  <Input
-                    placeholder="Enter Image url"
-                    defaultValue={card.imageUrl}
-                    onChange={(e) => setImgUrl(e.target.value)}
-                  />
-                  {imgUrl && (
-                    <>
-                      <div className="flex justify-center items-center mt-4 pr-2">
-                        <Image width={300} src={imgUrl} />
-                      </div>
-                    </>
-                  )}
-                </Form.Item>
-
-                <Form.Item className=" flex justify-end px-10">
-                  <Button htmlType="submit" className="">
-                    Add
-                  </Button>
-                </Form.Item>
               </Form>
             </Modal>
           </>
