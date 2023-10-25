@@ -184,7 +184,7 @@ const Sidebar = () => {
   return (
     <div
       className="sidebar h-[100vh] w-[min(300px,33vw)] transition-all text-[min(4vw,30px)]
-        shadow-md shadow-black fixed"
+      shadow-md shadow-black fixed"
       // onLoad={saved}
     >
       <Modal
@@ -259,7 +259,7 @@ const Sidebar = () => {
 
       <div
         className="projects
-        w-4/5 ml-auto mr-auto mt-12 p-3"
+        w-4/5 ml-auto mr-auto mt-12 p-3 max-h-[calc(100vh-200px)] overflow-y-auto"
       >
         <div className="font-bold mb-3 text-[.6em]">Projects</div>
 
