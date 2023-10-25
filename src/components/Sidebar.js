@@ -1,35 +1,33 @@
 import axios from "axios";
 import icon from "../icons/favicon.ico";
 import SItem from "./sidebar_item";
-
+import { useForm } from "antd/es/form/Form";
 import { useState, useEffect } from "react";
-import { IoIosArrowRoundBack} from "react-icons/io";
-import { AiOutlineDelete} from "react-icons/ai";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { AiOutlineDelete } from "react-icons/ai";
 
 import { useParams } from "react-router-dom";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
-import { Form, Radio, Space, Input, Button, Modal } from 'antd';
+import { Form, Radio, Space, Input, Button, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
-
 
 const Sidebar = () => {
   const params = useParams();
-  const {baseUrl} = useContext(UserContext);
+  const { baseUrl } = useContext(UserContext);
   const [dark, setDark] = useState(false);
 
   const [projects, setProjects] = useState([]);
   const [input, setInput] = useState("");
   const [showInput, setShowInput] = useState(false);
 
-
-const [open, setOpen] = useState(false);
-const [confirmLoading, setConfirmLoading] = useState(false);
-const [projectTitle, setProjectTitle] = useState("");
-const [projectDesc, setProjectDesc]=useState("");
-const [form] = Form.useForm();
-const [value, setValue] = useState(1);
-const [isPrivate, setisPrivate]=useState(false);
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectDesc, setProjectDesc] = useState("");
+  const [form] = Form.useForm();
+  const [value, setValue] = useState(1);
+  const [isPrivate, setisPrivate] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -37,15 +35,12 @@ const [isPrivate, setisPrivate]=useState(false);
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get(
-        `${baseUrl}/projects`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseUrl}/projects`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+        },
+      });
       const { projects } = response.data;
 
       setProjects(projects);
@@ -56,27 +51,25 @@ const [isPrivate, setisPrivate]=useState(false);
   };
 
   const showModal = () => {
+    console.log(projectTitle);
     setOpen(true);
   };
   const handleOk = async () => {
-    // console.log(isPrivate);
-    setConfirmLoading(true)
-    await createProject(projectTitle,projectDesc,isPrivate);
-    setConfirmLoading(false)
+    console.log(projectTitle);
+    setConfirmLoading(true);
+    await createProject(projectTitle, projectDesc, isPrivate);
+    setConfirmLoading(false);
     setOpen(false);
-   
+    form.resetFields();
   };
 
   const handleCancel = () => {
-    console.log('Clicked cancel button');
-    
-    setOpen(false);
-    
-  };
+    console.log("Clicked cancel button");
+    setProjectTitle("");
+    setProjectDesc("");
 
-  const handleClick = (e) => {
-    showModal();  
-    setShowInput(true);
+    setOpen(false);
+    form.resetFields();
   };
 
   const createProject = async (name, desc) => {
@@ -85,8 +78,8 @@ const [isPrivate, setisPrivate]=useState(false);
         `${baseUrl}/projects`,
         {
           name: name,
-          description : desc,
-          isPrivate: isPrivate
+          description: desc,
+          isPrivate: isPrivate,
         },
         {
           headers: {
@@ -96,7 +89,7 @@ const [isPrivate, setisPrivate]=useState(false);
         }
       );
       setProjects([...projects, response.data.newProject]);
-      setInput(""); 
+      setInput("");
     } catch (error) {
       console.error("Error creating project:", error);
     }
@@ -111,7 +104,7 @@ const [isPrivate, setisPrivate]=useState(false);
           Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
         },
       });
-      setProjects(projects.filter(project => project._id !== id));
+      setProjects(projects.filter((project) => project._id !== id));
     } catch (error) {
       console.error("Error deleting project:", error);
     }
@@ -156,10 +149,10 @@ const [isPrivate, setisPrivate]=useState(false);
     child[2].classList.add("hidden");
   };
 
-  const onChange=(e)=>{
-    console.log(e.target.value)
-      setProjectTitle(e.target.value);
-  }
+  const onChange = (e) => {
+    console.log(e.target.value);
+    setProjectTitle(e.target.value);
+  };
 
   let themechange = (e) => {
     let x = document.querySelector(".themeslider");
@@ -182,14 +175,11 @@ const [isPrivate, setisPrivate]=useState(false);
   };
 
   const onRadioChange = (e) => {
-    console.log('radio checked', e.target.value);
+    console.log("radio checked", e.target.value);
     setValue(e.target.value);
-    if(e.target.value==1)
-    setisPrivate(false);
-    else
-    setisPrivate(true);
+    if (e.target.value == 1) setisPrivate(false);
+    else setisPrivate(true);
   };
-
 
   return (
     <div
@@ -206,9 +196,9 @@ const [isPrivate, setisPrivate]=useState(false);
       >
         <Form
           name="basic"
+          form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
           autoComplete="off"
           className="my-8"
         >
@@ -276,7 +266,7 @@ const [isPrivate, setisPrivate]=useState(false);
         {projects.map((project, i) =>
           project._id === params.section ? (
             <div className="flex items-center">
-              <SItem key={i} keyno={i} project={project} selected/>
+              <SItem key={i} keyno={i} project={project} selected />
               <div className="" onClick={() => deleteProject(project._id)}>
                 <AiOutlineDelete className=" text-black text-lg"></AiOutlineDelete>
               </div>
