@@ -1,6 +1,7 @@
 import { useState } from "react";
+// import { deleteProject } from './Sidebar.js';
 import { Link, useParams } from "react-router-dom";
-
+import { AiOutlineDelete} from "react-icons/ai";
 const SItem = (props) => {
   const [counter, setCounter] = useState(0);
   const [projectName, setProjectName] = useState("");
@@ -43,7 +44,7 @@ const SItem = (props) => {
         <Link to={`/kanban/${props.project._id}`}>
           <div
             className={`${
-              props.selected ? "bg-gray-200 text-white" : ""
+              props.selected ? "bg-gray-200 text-white px-3 py-1" : ""
             } cursor-pointer px-3 py-1 rounded-xl transition text-gray-600 hover:bg-gray-200 hover:text-gray-800`}
           >
             {props.project.name}
