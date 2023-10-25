@@ -107,7 +107,7 @@ export default function Column({ index, data, setElements, title }) {
 			</div>
 			<Modal
 				destroyOnClose={true}
-				title="Basic Modal"
+				title="New Issue"
 				open={isModalOpen}
 				// onOk={handleOk}
 				onCancel={handleCancel}
@@ -123,7 +123,7 @@ export default function Column({ index, data, setElements, title }) {
 					className="my-8"
 				>
 					<Form.Item
-						label="Card Title"
+						label="Issue Title"
 						name="title"
 						rules={[{ required: true, message: "Please enter a valid title." }]}
 					>
@@ -136,7 +136,7 @@ export default function Column({ index, data, setElements, title }) {
 					>
 						<Input placeholder="Enter a valid Description" />
 					</Form.Item>
-					<Form.Item
+					{/* <Form.Item
 						label="Priority"
 						name="priority"
 						rules={[
@@ -168,18 +168,18 @@ export default function Column({ index, data, setElements, title }) {
 								},
 							]}
 						/>
-					</Form.Item>
+					</Form.Item> */}
 					<Form.Item label="Tag" name="tags" rules={[{ required: false }]}>
 						<Select
 							mode="tags"
 							style={{ width: "100%" }}
 							value={tags}
 							onChange={handleTagChange}
-							placeholder="Blog Tags"
+							placeholder="Labels of Issue"
 							className="bg-white"
 						></Select>
 					</Form.Item>
-					<Form.Item
+					{/* <Form.Item
 						label="Date"
 						name="startDate"
 						rules={[{ required: false }]}
@@ -189,8 +189,8 @@ export default function Column({ index, data, setElements, title }) {
 							format={dateFormat}
 							className="w-full"
 						/>
-					</Form.Item>
-					<Form.Item
+					</Form.Item> */}
+					{/* <Form.Item
 						label="Image"
 						name="imageUrl"
 						rules={[{ required: false }]}
@@ -206,7 +206,7 @@ export default function Column({ index, data, setElements, title }) {
 								</div>
 							</>
 						)}
-					</Form.Item>
+					</Form.Item> */}
 
 					<Form.Item className=" flex justify-end px-10">
 						<Button htmlType="submit" className="">

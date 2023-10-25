@@ -110,9 +110,6 @@ function Card(props) {
       {
         title: values.title,
         description: values.description,
-        startDate: values.startDate,
-        imageUrl: imgUrl,
-        priority: priority,
         tags: tags,
       },
       {
@@ -192,15 +189,6 @@ function Card(props) {
                   })}
                 </div>
                 {card?.imageUrl && (
-                  <div className="flex w-full h-auto justify-center">
-                    <img
-                      className="w-[90%] aspect-video rounded"
-                      src={card?.imageUrl}
-                      alt=""
-                    />
-                  </div>
-                )}
-                {card?.imageUrl && (
                   <div className="px-5 pt-4 mt-4">
                     <div className="font-medium font-body text-base mb-1">
                       {card?.title}
@@ -234,21 +222,6 @@ function Card(props) {
                       <DatePicker defaultValue={dayjs()} format={dateFormat} />
                     </div>
                   )}
-                  {card?.priority === "high" && (
-                    <span class="bg-red-200 flex place-items-center rounded-full w-12 h-6 text-sm font-semibold text-red-700 px-2 mt-2">
-                      {card?.priority}
-                    </span>
-                  )}
-                  {card?.priority === "medium" && (
-                    <span class="bg-lime-200 flex place-items-center rounded-full w-12 h-6 text-sm font-semibold text-lime-700 px-2 mt-2">
-                      {card?.priority.slice(0, 3)}
-                    </span>
-                  )}
-                  {card?.priority === "low" && (
-                    <span class="bg-gray-200 flex place-items-center rounded-full w-12 h-6 text-sm font-semibold text-gray-700 px-3 mt-2">
-                      {card.priority}
-                    </span>
-                  )}
                 </div>
               </div>
             </Popover>
@@ -276,6 +249,7 @@ function Card(props) {
                     defaultValue={card.title}
                   />
                 </Form.Item>
+                
                 <Form.Item
                   label="Description"
                   name="description"
