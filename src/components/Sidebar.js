@@ -268,7 +268,7 @@ const Sidebar = () => {
             <div className="flex items-center">
               <SItem key={i} keyno={i} project={project} selected />
               <div className="" onClick={() => deleteProject(project._id)}>
-                <AiOutlineDelete className=" text-black text-lg"></AiOutlineDelete>
+                <AiOutlineDelete className=" text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
               </div>
             </div>
           ) : (

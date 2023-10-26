@@ -10,12 +10,14 @@ import { Form, Input, InputNumber } from "antd";
 import { Modal, Select, Image } from "antd";
 import { useState } from "react";
 import { UserContext } from "../utils/contexts/User.js";
-
+// import { Popover, Button } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
 
 function Card(props) {
   const params = useParams();
   const { baseUrl } = useContext(UserContext);
- 
+  // const [openIssue, setOpenIssue]=useState(true);
+  const [ContentVisible, setContentVisible]=useState(false);
   const card = props.card;
   const dateFormat = "DD/MM/YYYY";
   const text = <span>Actions</span>;
@@ -72,7 +74,6 @@ function Card(props) {
         Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
       },
     });
-
     getProjectCards();
   };
 
@@ -147,6 +148,10 @@ function Card(props) {
     </>
   );
 
+  const handleEllipsisClick = () => {
+    console.log("clicked on 3 dots")
+    setOpen(!open); // Toggle the `open` state
+  };
 
   const onRadioChange = (e) => {
     console.log('radio checked', e.target.value);
@@ -166,67 +171,98 @@ function Card(props) {
               onOpenChange={handleOpenChange}
               trigger="contextMenu"
             >
-              <div
-                ref={provided.innerRef}
-                snapshot={snapshot}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                className="w-[88%] m-4 h-max bg-[#FFFFFF] rounded-lg overflow-hidden"
-              >
-                <div className="tags flex justify-start ml-4 mr-4 mt-4 mb-2 overflow-x-scroll">
-                  {props.card.tags.map((item, index) => {
-                    return (
-                      <Tag
-                        key={index}
-                        bordered={false}
-                        class={`inline-block rounded px-3 py-1 text-sm font-semibold text-gray-50 mr-2 mb-2`}
-                        color={item.color}
-                      >
-                        {item.name}
-                      </Tag>
-                    );
-                  
-                  })}
-                </div>
-                {card?.imageUrl && (
-                  <div className="px-5 pt-4 mt-4">
-                    <div className="font-medium font-body text-base mb-1">
-                      {card?.title}
-                    </div>
-                    <p className="text-gray-500 font-body text-base">
-                      {card?.description}
-                    </p>
+              <div className="relative">
+              <div onClick={handleEllipsisClick} className="hover:bg-transparent">
+              <Button
+                  type="text"
+                  icon={<EllipsisOutlined className="hover:bg-transparent"/>}
+                  className="absolute top-4 right-5 cursor-pointer"
+                  visible={open} // Use the `open` state to control visibility
+                  onVisibleChange={handleEllipsisClick} // Use the new function
+                  trigger="click"
+                />
+              </div>
+              
+                <div
+                  ref={provided.innerRef}
+                  snapshot={snapshot}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                  className="w-[88%] m-4 h-max bg-[#FFFFFF] rounded-lg overflow-hidden"
+                >
+                  <div className="tags flex justify-start ml-4 mr-4 mt-4 mb-2 overflow-x-scroll">
+                    {props.card.tags.map((item, index) => {
+                      return (
+                        <Tag
+                          key={index}
+                          bordered={false}
+                          className={`inline-block rounded px-3 py-1 text-sm font-semibold text-gray-50 mr-2 mb-2`}
+                          color={item.color}
+                        >
+                          {item.name}
+                        </Tag>
+                      );
+                    })}
                   </div>
-                )}
-                {!card?.imageUrl && (
-                  <div className="px-5">
-                    <div className="font-medium font-body text-base mb-1">
-                      {card?.title}
-                    </div>
-                    <p className="font-body text-gray-500 text-base">
-                      {card?.description}
-                    </p>
-                  </div>
-                )}
-                <div className="flex justify-between px-5 pt-3">
-                  {card?.startDate && (
-                    <div class="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
-                      <DatePicker
-                        defaultValue={dayjs(card?.startDate, dateFormat)}
-                        format={dateFormat}
-                      />
+                  {card?.imageUrl && (
+                    <div className="px-5 pt-4 mt-4">
+                      <div className="font-medium font-body text-base mb-1">
+                        {card?.title}
+                      </div>
+                      <p className="text-gray-500 font-body text-base">
+                        {card?.description}
+                      </p>
                     </div>
                   )}
-                  {!card?.startDate && (
-                    <div class="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
-                      <DatePicker defaultValue={dayjs()} format={dateFormat} />
+                  {!card?.imageUrl && (
+                    <div className="px-5">
+                      <div className="font-medium font-body text-base mb-1">
+                        {card?.title}
+                      </div>
+                      <p className="font-body text-gray-500 text-base">
+                        {card?.description}
+                      </p>
                     </div>
                   )}
+                  <div className="flex justify-between px-5 pt-3">
+                    {card?.startDate && (
+                      <div className="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
+                        <DatePicker
+                          defaultValue={dayjs(card?.startDate, dateFormat)}
+                          format={dateFormat}
+                        />
+                      </div>
+                    )}
+                    {!card?.startDate && (
+                      <div class="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
+                        <DatePicker
+                          defaultValue={dayjs()}
+                          format={dateFormat}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </Popover>
-
-            <Modal
+{/* 
+            {ContentVisible && (
+              // <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-75">
+              //   <div className="bg-white p-4 rounded-lg">
+                  {content}
+              //     <Button
+              //       type="primary"
+              //       onClick={() => {
+              //         // Set isContentVisible to false when the content is closed
+              //         setContentVisible(false);
+              //       }}
+              //     >
+              //       Close
+              //     </Button>
+              // //   </div>
+              // </div>
+            )} */}
+            {/* <Modal
               destroyOnClose={true}
               title="Issue Modal"
               open={isModalOpen}
@@ -244,14 +280,10 @@ function Card(props) {
                 className="my-8"
               >
                 <Form.Item label="Comment" name="title">
-                  <Input
-                    placeholder="Enter comments"
-                   
-                  />
+                  <Input placeholder="Enter comments" />
                 </Form.Item>
-                
               </Form>
-            </Modal>
+            </Modal> */}
           </>
         );
       }}
