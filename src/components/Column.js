@@ -96,9 +96,9 @@ export default function Column({ index, data, setElements, title }) {
 				<div className="flex items-center justify-between p-2">
 					<div className="col_name font-semibold p-2 font-body">{title}</div>
 					<div className="icons flex flex-wrap justify-evenly">
-						<div className="first mr-2 p-1">
+						{/* <div className="first mr-2 p-1">
 							<FiMoreHorizontal className="text-[#768396]" />
-						</div>
+						</div> */}
 						<div className="second bg-[#D8DAFF] rounded-md p-1">
 							<BsPlus fill="#6772FE" onClick={showModal} />
 						</div>

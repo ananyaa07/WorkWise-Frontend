@@ -1,4 +1,4 @@
-import React, { useEffect,useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import { Draggable } from "react-beautiful-dnd";
@@ -11,13 +11,13 @@ import { Modal, Select, Image } from "antd";
 import { useState } from "react";
 import { UserContext } from "../utils/contexts/User.js";
 // import { Popover, Button } from 'antd';
-import { EllipsisOutlined } from '@ant-design/icons';
+import { EllipsisOutlined } from "@ant-design/icons";
 
 function Card(props) {
   const params = useParams();
   const { baseUrl } = useContext(UserContext);
   // const [openIssue, setOpenIssue]=useState(true);
-  const [ContentVisible, setContentVisible]=useState(false);
+  const [ContentVisible, setContentVisible] = useState(false);
   const card = props.card;
   const dateFormat = "DD/MM/YYYY";
   const text = <span>Actions</span>;
@@ -29,6 +29,7 @@ function Card(props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [form] = Form.useForm();
   const [value, setValue] = useState(1);
+  const [comment, setComment] = useState("");
 
   function getNames(objArray) {
     const names = [];
@@ -96,10 +97,28 @@ function Card(props) {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
+  const handleOk = async (values) => {
+    try {
+      await axios.post(
+        `${baseUrl}/cards/${card._id}/comment`,
+        {
+          message: values.title,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        }
+      );
 
+      setIsModalOpen(false);
+      getProjectCards();
+    } catch (error) {
+      console.error(error);
+      // Handle error, show a message, etc.
+    }
+  };
   const handleCancel = () => {
     form.resetFields();
     setIsModalOpen(false);
@@ -142,19 +161,19 @@ function Card(props) {
             showModal();
           }}
         >
-         Put Comment
+          Put Comment
         </Button>
       </div>
     </>
   );
 
   const handleEllipsisClick = () => {
-    console.log("clicked on 3 dots")
+    console.log("clicked on 3 dots");
     setOpen(!open); // Toggle the `open` state
   };
 
   const onRadioChange = (e) => {
-    console.log('radio checked', e.target.value);
+    console.log("radio checked", e.target.value);
     setValue(e.target.value);
   };
 
@@ -172,17 +191,20 @@ function Card(props) {
               trigger="contextMenu"
             >
               <div className="relative">
-              <div onClick={handleEllipsisClick} className="hover:bg-transparent">
-              <Button
-                  type="text"
-                  icon={<EllipsisOutlined className="hover:bg-transparent"/>}
-                  className="absolute top-4 right-5 cursor-pointer"
-                  visible={open} // Use the `open` state to control visibility
-                  onVisibleChange={handleEllipsisClick} // Use the new function
-                  trigger="click"
-                />
-              </div>
-              
+                <div
+                  onClick={handleEllipsisClick}
+                  className="hover:bg-transparent"
+                >
+                  <Button
+                    type="text"
+                    icon={<EllipsisOutlined className="hover:bg-transparent" />}
+                    className="absolute top-4 right-5 cursor-pointer"
+                    visible={open} // Use the `open` state to control visibility
+                    onVisibleChange={handleEllipsisClick} // Use the new function
+                    trigger="click"
+                  />
+                </div>
+
                 <div
                   ref={provided.innerRef}
                   snapshot={snapshot}
@@ -196,7 +218,7 @@ function Card(props) {
                         <Tag
                           key={index}
                           bordered={false}
-                          className={`inline-block rounded px-3 py-1 text-sm font-semibold text-gray-50 mr-2 mb-2`}
+                          className={`inline-block rounded px-3 py-1 text-sm font-semibold text-black mr-2 mb-2`}
                           color={item.color}
                         >
                           {item.name}
@@ -245,45 +267,37 @@ function Card(props) {
                 </div>
               </div>
             </Popover>
-{/* 
-            {ContentVisible && (
-              // <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-75">
-              //   <div className="bg-white p-4 rounded-lg">
-                  {content}
-              //     <Button
-              //       type="primary"
-              //       onClick={() => {
-              //         // Set isContentVisible to false when the content is closed
-              //         setContentVisible(false);
-              //       }}
-              //     >
-              //       Close
-              //     </Button>
-              // //   </div>
-              // </div>
-            )} */}
-            {/* <Modal
-              destroyOnClose={true}
-              title="Issue Modal"
-              open={isModalOpen}
-              // onOk={handleOk}
-              onCancel={handleCancel}
-              footer={null}
-            >
-              <Form
-                name="basic"
-                labelCol={{ span: 6 }}
-                wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                autoComplete="off"
-                className="my-8"
+            {
+              <Modal
+                destroyOnClose={true}
+                title="Issue Modal"
+                visible={isModalOpen}
+                footer={null}
+                onCancel={handleCancel}
               >
-                <Form.Item label="Comment" name="title">
-                  <Input placeholder="Enter comments" />
-                </Form.Item>
-              </Form>
-            </Modal> */}
+                <Form
+                  name="basic"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={handleOk}
+                  autoComplete="off"
+                  className="my-8"
+                  
+                >
+                  <Form.Item label="Comment" name="title">
+                    <Input placeholder="Enter comments" />
+                  </Form.Item>
+
+                  <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+                    <Button key="ok" type="primary" htmlType="submit" className="ml-[16.5rem]" >
+                      OK
+                    </Button>
+                  </Form.Item>
+
+                </Form>
+              </Modal>
+            }
           </>
         );
       }}
