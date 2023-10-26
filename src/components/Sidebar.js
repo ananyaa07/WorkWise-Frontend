@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { AiOutlineDelete } from "react-icons/ai";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
 import { Form, Radio, Space, Input, Button, Modal } from "antd";
@@ -28,6 +28,8 @@ const Sidebar = () => {
   const [form] = Form.useForm();
   const [value, setValue] = useState(1);
   const [isPrivate, setisPrivate] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects();
@@ -96,7 +98,7 @@ const Sidebar = () => {
   };
 
   const deleteProject = async (id) => {
-    // console.log(id);
+    setIsDeleting(true);
     try {
       const response = await axios.delete(`${baseUrl}/projects/${id}`, {
         headers: {
@@ -104,8 +106,17 @@ const Sidebar = () => {
           Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
         },
       });
+
+      // Check if the project was deleted successfully
+      if (response.status === 200) {
+        // Navigate to the "/kanban" route
+        setIsDeleting(false);
+        navigate("/kanban");
+      }
+
       setProjects(projects.filter((project) => project._id !== id));
     } catch (error) {
+      setIsDeleting(false);
       console.error("Error deleting project:", error);
     }
   };
@@ -268,7 +279,11 @@ const Sidebar = () => {
             <div className="flex items-center">
               <SItem key={i} keyno={i} project={project} selected />
               <div className="" onClick={() => deleteProject(project._id)}>
-                <AiOutlineDelete className=" text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
+                {isDeleting ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-red-900 ml-2 text-red-700"></div>
+                ) : (
+                  <AiOutlineDelete className=" text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
+                )}
               </div>
             </div>
           ) : (
