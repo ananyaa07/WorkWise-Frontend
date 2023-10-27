@@ -4,11 +4,42 @@ import Cards from "./Cards";
 import { DragDropContext } from "react-beautiful-dnd";
 import ColumnsList from "./ColumnsList";
 import axios from "axios";
+
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
-import Skeleton from "react-loading-skeleton";
+// import Skeleton from "react-loading-skeleton";
+import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form,Input, Modal, Dropdown, message, Space, Tooltip } from 'antd';
 
+const handleButtonClick = (e) => {
+  message.info('Click on left button.');
+  console.log('click left button', e);
+};
+const handleMenuClick = (e) => {
+  message.info('Click on menu item.');
+  console.log('click', e);
+};
+
+
+const items = [
+  {
+    label: '1st menu item',
+    key: '1',
+    icon: <UserOutlined />,
+  },
+  {
+    label: '2nd menu item',
+    key: '2',
+    icon: <UserOutlined />,
+  },
+]
+const menuProps = {
+  items,
+  onClick: handleMenuClick,
+};
 const KanbanSection = () => {
+  const [open, setOpen] = useState(false);
+  const form = Form.useForm();
   const params = useParams();
   const { baseUrl } = useContext(UserContext);
   let cardsData = [[], [], [], []];
@@ -17,7 +48,10 @@ const KanbanSection = () => {
   const [elements, setElements] = useState(cardsData);
   const [project, setProject] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showAddCollaboratorModal = () => {
+    setIsModalVisible(true);
+  };
   const getProjectCards = async () => {
     try {
       const promises = Columns.map(async (column, i) => {
@@ -138,24 +172,71 @@ const KanbanSection = () => {
     setElements(listCopy);
   };
 
+  
+  const addCollaborator = () => {
+    console.log("added collaborator");
+  }
   const LoadingSkeleton = () => {
     return (
       <div className="card-container">
-        <Skeleton count={5} height={100} />{" "}
+        {/* <Skeleton count={5} height={100} />{" "} */}
         {/* Adjust count and height as needed */}
       </div>
     );
   };
+  const handleCancel = () => {
+    console.log("cancelled");
+    setIsModalVisible(false);
+  }
+
+  const handleOk = () => { 
+    console.log("added collaborator");
+    setIsModalVisible(false);
+  }
 
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className=" overflow-auto bg-[#F3F4F8] h-[100vh] w-[max(calc(100%-300px),67vw)] absolute right-0">
           <ColumnsList />
+          <Modal
+          
+          title="Add collaborators"
+          // visible={isModalVisible}
+          open={open}
+          onOk={handleOk}
+          // confirmLoading={confirmLoading}
+          onCancel={handleCancel}
+      >
+        <Form
+          name="basic"
+          form={form}
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 16 }}
+          autoComplete="off"
+          className="my-8"
+        >
+          <Form.Item label="Collaborator" name="collaborator">
+            <Input
+              placeholder="Enter github username"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
           {project && (
-            <div className="title ml-5 mb-5 text-3xl font-semibold font-title">
+            <div className="flex w-full space-x-[620px] items-center">
+            <div className="title ml-5 mb-5 text-3xl font-semibold font-title w-full">
               {project.name}
             </div>
+            <Dropdown.Button
+            onClick={addCollaborator}
+            menu={menuProps}
+            placement="bottom"
+            icon={<UserOutlined />}
+          >
+            Add Collaborators
+          </Dropdown.Button >
+          </div>
           )}
           {isLoading ? ( // Show loading skeleton while loading
             <div className="flex flex-row flex-wrap characters">
