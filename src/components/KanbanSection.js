@@ -52,7 +52,7 @@ const KanbanSection = () => {
     const updateProjectCards = async (id, categoryIndex) => {
       try {
         const response = await axios.put(
-					`${baseUrl}/api/v1/cards/${id}`,
+					`${baseUrl}/cards/${id}`,
 					{
 						category: Columns[categoryIndex],
 					},
