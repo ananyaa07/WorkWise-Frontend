@@ -6,7 +6,7 @@ import ColumnsList from "./ColumnsList";
 import axios from "axios";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
-import Skeleton from "react-loading-skeleton";
+import { Spin } from "antd";
 
 const KanbanSection = () => {
   const params = useParams();
@@ -17,6 +17,7 @@ const KanbanSection = () => {
   const [elements, setElements] = useState(cardsData);
   const [project, setProject] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [collaborators, setCollaborators] = useState([]);
 
   const getProjectCards = async () => {
     try {
@@ -78,12 +79,31 @@ const KanbanSection = () => {
     }
   };
 
+  const getAllCollaborators = async () => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/projects/${params.section}/collaborators`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setCollaborators(response.data);
+    } catch (error) {
+      console.error("Error fetching project collaborators:", error);
+    }
+  };
+
   useEffect(() => {
     getProjectCards();
   }, [project]);
 
   useEffect(() => {
     getProject();
+    getAllCollaborators();
   }, []);
   // useEffect(() => {
   //   if (localStorage.getItem(params.section) === null)
@@ -138,86 +158,39 @@ const KanbanSection = () => {
     setElements(listCopy);
   };
 
-  const LoadingSkeleton = () => {
-    return (
-      <div className="card-container">
-        <Skeleton count={5} height={100} />{" "}
-        {/* Adjust count and height as needed */}
-      </div>
-    );
-  };
-
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className=" overflow-auto bg-[#F3F4F8] h-[100vh] w-[max(calc(100%-300px),67vw)] absolute right-0">
           <ColumnsList />
-          {project && (
+          {project.name ? (
             <div className="title ml-5 mb-5 text-3xl font-semibold font-title">
               {project.name}
             </div>
+          ) : (
+            <div className="title ml-6 mb-8 text-3xl font-semibold font-title">
+              <Spin />
+            </div>
           )}
-          {isLoading ? ( // Show loading skeleton while loading
-            <div className="flex flex-row flex-wrap characters">
-              <div className="flex flex-row flex-wrap flex-1">
-                <div className="flex-1">
-                  <LoadingSkeleton /> {/* Render the loading skeleton */}
-                </div>
-                <div className="flex-1">
-                  <LoadingSkeleton />
-                </div>
-              </div>
-              <div className="flex flex-row flex-wrap flex-1">
-                <div className="flex-1">
-                  <LoadingSkeleton />
-                </div>
-                <div className="flex-1">
-                  <LoadingSkeleton />
-                </div>
-              </div>
+          {isLoading ? (
+            <div className="ml-6 mt-8">
+              <Spin />
             </div>
           ) : (
+            // Render your cards when not loading
             <div className="flex flex-row flex-wrap characters">
-              <div className="flex flex-row flex-wrap flex-1">
-                <div className="flex-1">
+              {/* Render Cards component for each column */}
+              {columnTitles.map((title, index) => (
+                <div className="flex-1" key={title}>
                   <Cards
-                    id={0}
-                    data={elements[0]}
+                    id={index}
+                    data={elements[index]}
                     setElements={setElements}
                     fullData={elements}
-                    columnTitle={columnTitles[0]}
+                    columnTitle={title}
                   />
                 </div>
-                <div className="flex-1">
-                  <Cards
-                    id={1}
-                    data={elements[1]}
-                    setElements={setElements}
-                    fullData={elements}
-                    columnTitle={columnTitles[1]}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row flex-wrap flex-1">
-                <div className="flex-1">
-                  <Cards
-                    id={2}
-                    data={elements[2]}
-                    setElements={setElements}
-                    fullData={elements}
-                    columnTitle={columnTitles[2]}
-                  />
-                </div>
-                <div className="flex-1">
-                  <Cards
-                    id={3}
-                    data={elements[3]}
-                    setElements={setElements}
-                    fullData={elements}
-                    columnTitle={columnTitles[3]}
-                  />
-                </div>
-              </div>
+              ))}
             </div>
           )}
         </div>
