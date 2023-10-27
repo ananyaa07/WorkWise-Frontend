@@ -283,18 +283,21 @@ function Card(props) {
                   onFinish={handleOk}
                   autoComplete="off"
                   className="my-8"
-                  
                 >
                   <Form.Item label="Comment" name="title">
                     <Input placeholder="Enter comments" />
                   </Form.Item>
 
                   <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                    <Button key="ok" type="primary" htmlType="submit" className="ml-[16.5rem]" >
+                    <Button
+                      key="ok"
+                      type="primary"
+                      htmlType="submit"
+                      className="ml-[16.5rem]"
+                    >
                       OK
                     </Button>
                   </Form.Item>
-
                 </Form>
               </Modal>
             }
