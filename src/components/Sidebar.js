@@ -9,7 +9,7 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
-import { Form, Radio, Space, Input, Button, Modal } from "antd";
+import { Spin, Form, Radio, Space, Input, Button, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 const Sidebar = () => {
@@ -29,6 +29,7 @@ const Sidebar = () => {
   const [value, setValue] = useState(1);
   const [isPrivate, setisPrivate] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const Sidebar = () => {
 
   const fetchProjects = async () => {
     try {
+      setIsLoadingProjects(true);
       const response = await axios.get(`${baseUrl}/projects`, {
         headers: {
           "Content-Type": "application/json",
@@ -46,8 +48,10 @@ const Sidebar = () => {
       const { projects } = response.data;
 
       setProjects(projects);
+      setIsLoadingProjects(false);
       console.log(projects);
     } catch (error) {
+      setIsLoadingProjects(false);
       console.error("Error fetching projects:", error);
     }
   };
@@ -66,7 +70,7 @@ const Sidebar = () => {
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
+    //console.log("Clicked cancel button");
     setProjectTitle("");
     setProjectDesc("");
 
@@ -274,20 +278,30 @@ const Sidebar = () => {
       >
         <div className="font-bold mb-3 text-[.6em]">Projects</div>
 
-        {projects.map((project, i) =>
-          project._id === params.section ? (
-            <div className="flex items-center">
-              <SItem key={i} keyno={i} project={project} selected />
-              <div className="" onClick={() => deleteProject(project._id)}>
-                {isDeleting ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-red-900 ml-2 text-red-700"></div>
-                ) : (
-                  <AiOutlineDelete className=" text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
-                )}
-              </div>
+        {isLoadingProjects ? (
+          <div className="flex items-center">
+            <div className="mr-2">
+              <Spin size="small" />
             </div>
-          ) : (
-            <SItem key={i} keyno={i} project={project} />
+          </div>
+        ) : (
+          projects.map((project, i) =>
+            project._id === params.section ? (
+              <div className="flex items-center">
+                <SItem key={i} keyno={i} project={project} selected />
+                <div className="" onClick={() => deleteProject(project._id)}>
+                  {isDeleting ? (
+                    <div className="ml-2">
+                      <Spin size="small" />
+                    </div>
+                  ) : (
+                    <AiOutlineDelete className="text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <SItem key={i} keyno={i} project={project} />
+            )
           )
         )}
 
