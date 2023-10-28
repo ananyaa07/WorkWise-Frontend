@@ -7,39 +7,31 @@ import axios from "axios";
 
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
-// import { Spin } from "antd";
-import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form,Input, Modal, Dropdown, message, Space, Tooltip } from 'antd';
+import { Spin } from "antd";
+import { DownOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Dropdown,
+  message,
+  Space,
+  Tooltip,
+  Avatar,
+} from "antd";
 
 const handleButtonClick = (e) => {
-  message.info('Click on left button.');
-  console.log('click left button', e);
+  message.info("Click on left button.");
+  console.log("click left button", e);
 };
 const handleMenuClick = (e) => {
-  message.info('Click on menu item.');
-  console.log('click', e);
+  console.log(e);
 };
 
-
-const items = [
-  {
-    label: '1st menu item',
-    key: '1',
-    icon: <UserOutlined />,
-  },
-  {
-    label: '2nd menu item',
-    key: '2',
-    icon: <UserOutlined />,
-  },
-]
-const menuProps = {
-  items,
-  onClick: handleMenuClick,
-};
 const KanbanSection = () => {
   const [open, setOpen] = useState(false);
-  const form = Form.useForm();
+  const [form] = Form.useForm();
   const params = useParams();
   const { baseUrl } = useContext(UserContext);
   let cardsData = [[], [], [], []];
@@ -48,11 +40,10 @@ const KanbanSection = () => {
   const [elements, setElements] = useState(cardsData);
   const [project, setProject] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const showAddCollaboratorModal = () => {
-    setIsModalVisible(true);
-  };
+  const [invitee, setInvitee] = useState("");
+
   const getProjectCards = async () => {
     try {
       const promises = Columns.map(async (column, i) => {
@@ -131,6 +122,23 @@ const KanbanSection = () => {
     }
   };
 
+  const items = collaborators.map((collaborator) => ({
+    label: collaborator.username,
+    key: collaborator.id, // Use a unique identifier for the key
+    icon: (
+      <Avatar
+        size={20}
+        src={collaborator.avatar_url}
+        className="flex items-center justify-center"
+      />
+    ),
+  }));
+
+  const menuProps = {
+    items,
+    onClick: handleMenuClick,
+  };
+
   useEffect(() => {
     getProjectCards();
   }, [project]);
@@ -139,22 +147,6 @@ const KanbanSection = () => {
     getProject();
     getAllCollaborators();
   }, []);
-  // useEffect(() => {
-  //   if (localStorage.getItem(params.section) === null)
-  //     localStorage.setItem(
-  //       params.section,
-  //       JSON.stringify({
-  //         title: "test",
-  //         description: "text",
-  //         others: "no",
-  //         data: [cardsData],
-  //       })
-  //     );
-  //   else {
-  //     let data = JSON.parse(localStorage.getItem(params.section));
-  //     setElements(data.data[0]);
-  //   }
-  // }, []);
 
   const removeFromList = (list, index) => {
     const result = Array.from(list);
@@ -192,49 +184,112 @@ const KanbanSection = () => {
     setElements(listCopy);
   };
 
+  const handleOk = async () => {
+    if (!invitee) {
+      message.error("Enter a valid username or click cancel");
+      return;
+    }
+
+    try {
+      setIsAdding(true);
+      const response = await axios.post(
+        `${baseUrl}/projects/${params.section}/collaborators`,
+        {
+          collaboratorUsernames: [invitee], // Pass the invitee username as an array
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        message.success(`Invite sent to ${invitee}`);
+        setOpen(false);
+        form.resetFields();
+        setInvitee("");
+        setIsAdding(false);
+      } else {
+        setIsAdding(false);
+        message.error("Failed to add collaborator");
+      }
+    } catch (error) {
+      setIsAdding(false);
+      console.error("Error adding collaborator:", error);
+      message.error("Failed to add collaborator");
+    }
+  };
+  const handleCancel = async () => {
+    form.resetFields();
+    setOpen(false);
+    setInvitee("");
+  };
+
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className=" overflow-auto bg-[#F3F4F8] h-[100vh] w-[max(calc(100%-300px),67vw)] absolute right-0">
           <ColumnsList />
           <Modal
-          
-          title="Add collaborators"
-          // visible={isModalVisible}
-          open={open}
-          onOk={handleOk}
-          // confirmLoading={confirmLoading}
-          onCancel={handleCancel}
-      >
-        <Form
-          name="basic"
-          form={form}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 16 }}
-          autoComplete="off"
-          className="my-8"
-        >
-          <Form.Item label="Collaborator" name="collaborator">
-            <Input
-              placeholder="Enter github username"
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
+            title="Invite collaborators"
+            open={open}
+            onOk={handleOk}
+            confirmLoading={isAdding}
+            onCancel={handleCancel}
+          >
+            <Form
+              form={form}
+              name="basic"
+              labelCol={{
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              style={{
+                maxWidth: 600,
+              }}
+              // onFinish={onFinish}
+              // onFinishFailed={onFinishFailed}
+              autoComplete="off"
+            >
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Please enter the Github username of the new collaborator",
+                  },
+                ]}
+              >
+                <Input
+                  onChange={(e) => setInvitee(e.target.value)}
+                  value={invitee}
+                  placeholder="Enter the Github username"
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
           {project.name ? (
             <div className="flex w-full space-x-[620px] items-center">
-            <div className="title ml-5 mb-5 text-3xl font-semibold font-title w-full">
-              {project.name}
+              <div className="title ml-5 mb-5 text-3xl font-semibold font-title w-full">
+                {project.name}
+              </div>
+              <Dropdown.Button
+                onClick={() => {
+                  setOpen(true);
+                }}
+                menu={menuProps}
+                placement="bottom"
+                icon={<UserOutlined />}
+              >
+                Add Collaborator
+              </Dropdown.Button>
             </div>
-            <Dropdown.Button
-            onClick={addCollaborator}
-            menu={menuProps}
-            placement="bottom"
-            icon={<UserOutlined />}
-          >
-            Add Collaborators
-          </Dropdown.Button >
-          </div>
           ) : (
             <div className="title ml-6 mb-8 text-3xl font-semibold font-title">
               <Spin />
