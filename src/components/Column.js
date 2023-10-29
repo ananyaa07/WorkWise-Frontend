@@ -163,6 +163,7 @@ export default function Column({
               mode="tags"
               style={{ width: "100%" }}
               placeholder="Select assignees"
+              onChange={(value) => setAssignees(value)}
             >
               {collaborators.map((collaborator) => (
                 <Select.Option
