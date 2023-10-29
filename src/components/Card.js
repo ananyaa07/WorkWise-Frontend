@@ -2,12 +2,12 @@ import React, { useEffect, useContext } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import { Draggable } from "react-beautiful-dnd";
-import { Button, Popover } from "antd";
+import { Button, Popover,Select} from "antd";
 import { Tag } from "antd";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Form, Input, InputNumber } from "antd";
-import { Modal, Select, Image } from "antd";
+import { Modal,Image } from "antd";
 import { useState } from "react";
 import { UserContext } from "../utils/contexts/User.js";
 // import { Popover, Button } from 'antd';
@@ -30,6 +30,8 @@ function Card(props) {
   const [form] = Form.useForm();
   const [value, setValue] = useState(1);
   const [comment, setComment] = useState("");
+  const [assigneeInput, setAssigneeInput] = useState("");
+  const [assigneeModalVisible, setAssigneeModalVisible] = useState(false);
 
   function getNames(objArray) {
     const names = [];
@@ -116,7 +118,6 @@ function Card(props) {
       getProjectCards();
     } catch (error) {
       console.error(error);
-      // Handle error, show a message, etc.
     }
   };
   const handleCancel = () => {
@@ -143,6 +144,41 @@ function Card(props) {
     getProjectCards();
   };
 
+  const showAssigneeModal = () => {
+    setAssigneeModalVisible(true);
+  };
+
+  const handleAssigneeOk = async (values) => {
+    try {
+      const assigneesArray = values.assignees.map((assignee) =>
+        assignee.trim()
+      );
+
+      await axios.post(
+        `${baseUrl}/cards/${card._id}/assign`,
+        {
+          id: card._id,
+          assignees: assigneesArray,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        }
+      );
+
+      setAssigneeModalVisible(false);
+      getProjectCards();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAssigneeCancel = () => {
+    setAssigneeModalVisible(false);
+  };
+
   const content = (
     <>
       <div className="flex flex-col">
@@ -163,13 +199,22 @@ function Card(props) {
         >
           Put Comment
         </Button>
+        <Button
+          className="mb-2"
+          onClick={() => {
+            setOpen(false);
+            showAssigneeModal();
+          }}
+        >
+          Add Assignee
+        </Button>
       </div>
     </>
   );
 
   const handleEllipsisClick = () => {
     console.log("clicked on 3 dots");
-    setOpen(!open); // Toggle the `open` state
+    setOpen(!open);
   };
 
   const onRadioChange = (e) => {
@@ -188,7 +233,7 @@ function Card(props) {
               content={content}
               open={open}
               onOpenChange={handleOpenChange}
-              trigger="contextMenu"
+              trigger="click"
             >
               <div className="relative">
                 <div
@@ -247,6 +292,22 @@ function Card(props) {
                     </div>
                   )}
                   <div className="flex justify-between px-5 pt-3">
+                    {card?.assignees && (
+                      <div className="flex items-center">
+                        {card.assignees.map((assignee) =>
+                          console.log(assignee.avatar_url)(
+                            <Image
+                              key={assignee.username}
+                              width={20}
+                              src={assignee.avatar_url}
+                              alt={assignee.picture}
+                              preview={false}
+                              className="mr-2 rounded-full"
+                            />
+                          )
+                        )}
+                      </div>
+                    )}
                     {card?.startDate && (
                       <div className="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
                         <DatePicker
@@ -291,6 +352,58 @@ function Card(props) {
                   <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                     <Button
                       key="ok"
+                      type="primary"
+                      htmlType="submit"
+                      className="ml-[16.5rem]"
+                    >
+                      OK
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Modal>
+            }
+
+            {
+              /* Assignee Modal */
+              <Modal
+                destroyOnClose={true}
+                title="Assignee Modal"
+                visible={assigneeModalVisible}
+                footer={null}
+                onCancel={handleAssigneeCancel}
+              >
+                <Form
+                  name="assigneeForm"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 16 }}
+                  initialValues={{ remember: true }}
+                  onFinish={handleAssigneeOk}
+                  autoComplete="off"
+                  className="my-8"
+                >
+                  <Form.Item
+                    label="Assignees"
+                    name="assignees"
+                    rules={[
+                      { required: true, message: "Please select assignees!" },
+                    ]}
+                  >
+                    <Select
+                      mode="tags"
+                      style={{ width: "100%" }}
+                      placeholder="Select assignees"
+                    >
+                       {props.collaborators.map((collaborator) => (
+      <Select.Option key={collaborator.id} value={collaborator.username}>
+        {collaborator.username}
+      </Select.Option>
+    ))}
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+                    <Button
+                      key="assigneeOk"
                       type="primary"
                       htmlType="submit"
                       className="ml-[16.5rem]"

@@ -4,7 +4,7 @@ import Cards from "./Cards";
 import { DragDropContext } from "react-beautiful-dnd";
 import ColumnsList from "./ColumnsList";
 import axios from "axios";
-
+import Column from "./Column"
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
 import { Spin } from "antd";
@@ -60,6 +60,7 @@ const KanbanSection = () => {
       });
 
       await Promise.all(promises);
+      console.log(cardsData);
       setElements(cardsData);
       setIsLoading(false); // Mark loading as complete
     } catch (error) {
@@ -124,7 +125,7 @@ const KanbanSection = () => {
 
   const items = collaborators.map((collaborator) => ({
     label: collaborator.username,
-    key: collaborator.id, // Use a unique identifier for the key
+    key: collaborator.id, 
     icon: (
       <Avatar
         size={20}
@@ -251,8 +252,6 @@ const KanbanSection = () => {
               style={{
                 maxWidth: 600,
               }}
-              // onFinish={onFinish}
-              // onFinishFailed={onFinishFailed}
               autoComplete="off"
             >
               <Form.Item
@@ -279,6 +278,7 @@ const KanbanSection = () => {
               <div className="title ml-5 mb-5 text-3xl font-semibold font-title w-full">
                 {project.name}
               </div>
+
               <Dropdown.Button
                 onClick={() => {
                   setOpen(true);
@@ -286,6 +286,7 @@ const KanbanSection = () => {
                 menu={menuProps}
                 placement="bottom"
                 icon={<UserOutlined />}
+                style={{ marginLeft: "800px" }}
               >
                 Add Collaborator
               </Dropdown.Button>
@@ -311,7 +312,9 @@ const KanbanSection = () => {
                     setElements={setElements}
                     fullData={elements}
                     columnTitle={title}
+                    collaborators={collaborators}
                   />
+                 
                 </div>
               ))}
             </div>

@@ -12,6 +12,7 @@ function Cards(props) {
         setElements={props.setElements}
         index={props.id}
         title={props.columnTitle}
+        collaborators={props.collaborators}
       />
       <Droppable droppableId={`${props.id}`}>
         {/* key={props.id} */}
@@ -29,6 +30,7 @@ function Cards(props) {
                     card={item}
                     index={index}
                     setElements={props.setElements}
+                    collaborators={props.collaborators}
                   />
                 ))}
             </div>

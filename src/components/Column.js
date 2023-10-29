@@ -12,8 +12,15 @@ import dayjs from "dayjs";
 import { Image } from "antd";
 import { Select } from "antd";
 import { UserContext } from "../utils/contexts/User.js";
+import KanbanSection from "./KanbanSection.js";
 
-export default function Column({ index, data, setElements, title }) {
+export default function Column({
+  index,
+  data,
+  setElements,
+  title,
+  collaborators,
+}) {
   const params = useParams();
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +31,7 @@ export default function Column({ index, data, setElements, title }) {
   const [imgUrl, setImgUrl] = useState("");
   const { baseUrl } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [assignees, setAssignees] = useState([]);
 
   const dateFormat = "DD/MM/YYYY";
 
@@ -76,6 +84,7 @@ export default function Column({ index, data, setElements, title }) {
         priority,
         startDate: dayjs(values.startDate).format(dateFormat),
         tags: tags,
+        assignees: assignees,
         category: Columns[inde],
         imageUrl: imgUrl,
       },
@@ -145,39 +154,26 @@ export default function Column({ index, data, setElements, title }) {
           >
             <Input placeholder="Enter a valid Description" />
           </Form.Item>
-          {/* <Form.Item
-						label="Priority"
-						name="priority"
-						rules={[
-							{ required: true, message: "Please enter a valid priority" },
-						]}
-					>
-						<Select
-							showSearch
-							placeholder="Select a person"
-							optionFilterProp="children"
-							onChange={onChange}
-							filterOption={(input, option) =>
-								(option?.label ?? "")
-									.toLowerCase()
-									.includes(input.toLowerCase())
-							}
-							options={[
-								{
-									value: "low",
-									label: "Low",
-								},
-								{
-									value: "medium",
-									label: "Medium",
-								},
-								{
-									value: "high",
-									label: "High",
-								},
-							]}
-						/>
-					</Form.Item> */}
+          <Form.Item
+            label="Assign Issue To"
+            name="assignees"
+            rules={[{ required: false }]}
+          >
+            <Select
+              mode="tags"
+              style={{ width: "100%" }}
+              placeholder="Select assignees"
+            >
+              {collaborators.map((collaborator) => (
+                <Select.Option
+                  key={collaborator.id}
+                  value={collaborator.username}
+                >
+                  {collaborator.username}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
           <Form.Item label="Tag" name="tags" rules={[{ required: false }]}>
             <Select
               mode="tags"
@@ -188,34 +184,6 @@ export default function Column({ index, data, setElements, title }) {
               className="bg-white"
             ></Select>
           </Form.Item>
-          {/* <Form.Item
-						label="Date"
-						name="startDate"
-						rules={[{ required: false }]}
-					>
-						<DatePicker
-							defaultValue={dayjs("28/06/2023", dateFormat)}
-							format={dateFormat}
-							className="w-full"
-						/>
-					</Form.Item> */}
-          {/* <Form.Item
-						label="Image"
-						name="imageUrl"
-						rules={[{ required: false }]}
-					>
-						<Input
-							placeholder="Enter Image url"
-							onChange={(e) => setImgUrl(e.target.value)}
-						/>
-						{imgUrl && (
-							<>
-								<div className="flex justify-center items-center mt-4 pr-2">
-									<Image width={300} src={imgUrl}/>
-								</div>
-							</>
-						)}
-					</Form.Item> */}
 
           <Form.Item className=" flex justify-end px-10">
             <Button htmlType="submit" className="" loading={isLoading}>
@@ -227,13 +195,3 @@ export default function Column({ index, data, setElements, title }) {
     </>
   );
 }
-
-// {
-// 	id: "21",
-// 	tags: ["Research", "Content"],
-// 	imgUrl: "https://picsum.photos/seed/picsum/200/300",
-// 	heading: "This is heading",
-// 	desc: "This is the description",
-// 	date: "2022-08-09",
-// 	priority: "High",
-//   },
