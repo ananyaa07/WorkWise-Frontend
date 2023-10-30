@@ -46,7 +46,7 @@ const Sidebar = () => {
         },
       });
       const { projects } = response.data;
-
+      // console.log(projects);
       setProjects(projects);
       setIsLoadingProjects(false);
       console.log(projects);

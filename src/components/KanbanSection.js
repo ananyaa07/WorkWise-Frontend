@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Cards from "./Cards";
 import { DragDropContext } from "react-beautiful-dnd";
 import ColumnsList from "./ColumnsList";
 import axios from "axios";
-import Column from "./Column"
+import Column from "./Column";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
 import { Spin } from "antd";
-import { DownOutlined, UserOutlined } from "@ant-design/icons";
+import { GithubOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -33,7 +33,8 @@ const KanbanSection = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const params = useParams();
-  const { baseUrl } = useContext(UserContext);
+  const { baseUrl, user } = useContext(UserContext);
+  const [isOwner, setIsOwner] = useState(false);
   let cardsData = [[], [], [], []];
   const columnTitles = ["Backlog", "To Do", "In Progress", "Review"];
   const Columns = ["backlog", "todo", "in-progress", "review"];
@@ -81,6 +82,8 @@ const KanbanSection = () => {
         }
       );
       setProject(response.data.project);
+      setIsOwner(response.data.project.owner.username === user.username);
+      setCollaborators(response.data.project.collaborators);
     } catch (error) {
       console.error("Error fetching project:", error);
     }
@@ -107,17 +110,12 @@ const KanbanSection = () => {
 
   const getAllCollaborators = async () => {
     try {
-      const response = await axios.get(
-        `${baseUrl}/projects/${params.section}/collaborators`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        }
-      );
-      console.log(response.data);
-      setCollaborators(response.data);
+      await axios.get(`${baseUrl}/projects/${params.section}/collaborators`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+        },
+      });
     } catch (error) {
       console.error("Error fetching project collaborators:", error);
     }
@@ -125,7 +123,7 @@ const KanbanSection = () => {
 
   const items = collaborators.map((collaborator) => ({
     label: collaborator.username,
-    key: collaborator.id, 
+    key: collaborator.id,
     icon: (
       <Avatar
         size={20}
@@ -275,12 +273,19 @@ const KanbanSection = () => {
           </Modal>
           {project.name ? (
             <div className="flex w-full space-x-[620px] items-center">
-              <div className="title ml-5 mb-5 text-3xl font-semibold font-title w-full">
+              <div className="flex title ml-5 mb-5 text-3xl font-semibold font-title w-full">
                 {project.name}
+                <div className="ml-4">
+                  <a
+                    href={`https://github.com/${project.owner.username}/${project.name}`}
+                  >
+                    <GithubOutlined />
+                  </a>
+                </div>
               </div>
-
               <Dropdown.Button
                 onClick={() => {
+                  if (!isOwner) return;
                   setOpen(true);
                 }}
                 menu={menuProps}
@@ -288,7 +293,7 @@ const KanbanSection = () => {
                 icon={<UserOutlined />}
                 style={{ marginLeft: "800px" }}
               >
-                Add Collaborator
+                {isOwner ? "Add Collaborator" : "Collaborators"}
               </Dropdown.Button>
             </div>
           ) : (
@@ -314,7 +319,6 @@ const KanbanSection = () => {
                     columnTitle={title}
                     collaborators={collaborators}
                   />
-                 
                 </div>
               ))}
             </div>

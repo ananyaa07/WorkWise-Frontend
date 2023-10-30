@@ -154,27 +154,31 @@ export default function Column({
           >
             <Input placeholder="Enter a valid Description" />
           </Form.Item>
-          <Form.Item
-            label="Assign Issue To"
-            name="assignees"
-            rules={[{ required: false }]}
-          >
-            <Select
-              mode="tags"
-              style={{ width: "100%" }}
-              placeholder="Select assignees"
-              onChange={(value) => setAssignees(value)}
+          {collaborators.length != 0 ? (
+            <Form.Item
+              label="Assign Issue To"
+              name="assignees"
+              rules={[{ required: false }]}
             >
-              {collaborators.map((collaborator) => (
-                <Select.Option
-                  key={collaborator.id}
-                  value={collaborator.username}
-                >
-                  {collaborator.username}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+              <Select
+                mode="tags"
+                style={{ width: "100%" }}
+                placeholder="Select assignees"
+                onChange={(value) => setAssignees(value)}
+              >
+                {collaborators.map((collaborator) => (
+                  <Select.Option
+                    key={collaborator.id}
+                    value={collaborator.username}
+                  >
+                    {collaborator.username}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          ) : (
+            <></>
+          )}
           <Form.Item label="Tag" name="tags" rules={[{ required: false }]}>
             <Select
               mode="tags"
