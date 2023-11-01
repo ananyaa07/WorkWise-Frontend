@@ -272,18 +272,25 @@ const KanbanSection = () => {
             </Form>
           </Modal>
           {project.name ? (
-            <div className="flex w-full space-x-[620px] items-center">
-              <div className="flex title ml-5 mb-5 text-3xl font-semibold font-title w-full">
+            <div className="flex justify-between ml-5 items-center mb-5">
+              <div className="flex space-x-4 items-center">
+              <div className=" whitespace-nowrap title text-3xl font-semibold  font-title ">
                 {project.name}
-                <div className="ml-4">
-                  <a
+                
+              </div>
+              <div className="ml-4 text-3xl mb-1">
+              <a
                     href={`https://github.com/${project.owner.username}/${project.name}`}
                   >
-                    <GithubOutlined />
+                    <GithubOutlined></GithubOutlined>
+                  
                   </a>
+                    
                 </div>
               </div>
+              
               <Dropdown.Button
+              className="my-5"
                 onClick={() => {
                   if (!isOwner) return;
                   setOpen(true);

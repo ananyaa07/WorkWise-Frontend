@@ -11,6 +11,7 @@ import image2 from "../icons/photo2.jpg"
 import { FaGithub, FaGoogle } from "react-icons/fa";
 
 export default function Login() {
+  const [isLoading, setisLoading] = useState(false);
   const CLIENT_ID=process.env.REACT_APP_GITHUB_CLIENT_ID
   const CALLBACK_URL=process.env.REACT_APP_GITHUB_CALLBACK_URL
   
@@ -18,8 +19,8 @@ export default function Login() {
   const { baseUrl } = useContext(UserContext);
 
   const redirectToGithubAuth = async () => {
-    const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}`
-    
+    setisLoading(true);
+    const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}`;
     const newWindow = window.open(url, "_self");
   };
 
@@ -77,9 +78,11 @@ export default function Login() {
                 <button
                   className="flex items-center justify-center w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-black rounded-lg hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:ring focus:ring-gray-700 focus:ring-opacity-50"
                   onClick={redirectToGithubAuth}
+                  
                 >
-                  <FaGithub className="mr-2" />
-                  Sign in with Github
+                  
+                  {!isLoading? <span className="flex items-center "><FaGithub className="mr-2" />Sign in with Github </span> : <span className="flex items-center"><FaGithub className="mr-2" />Signing in ...</span>}
+
                 </button>
                 
               </div>

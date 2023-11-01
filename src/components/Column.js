@@ -10,7 +10,7 @@ import { useEffect, useContext } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import { Image } from "antd";
-import { Select } from "antd";
+import {  message, Select } from "antd";
 import { UserContext } from "../utils/contexts/User.js";
 import KanbanSection from "./KanbanSection.js";
 
@@ -95,7 +95,11 @@ export default function Column({
         },
       }
     );
-
+    if (res.status === 200) {
+      message.success(`Issue added successfully`);
+    } else {
+      message.error("Failed to add issue");
+    }
     console.log(dayjs(values.startDate).format(dateFormat));
     setIsLoading(false);
     setIsModalOpen(false);

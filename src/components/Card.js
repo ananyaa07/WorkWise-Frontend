@@ -7,7 +7,7 @@ import { Tag } from "antd";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Form, Input, InputNumber } from "antd";
-import { Modal, Image } from "antd";
+import { message, Modal, Image } from "antd";
 import { useState } from "react";
 import { UserContext } from "../utils/contexts/User.js";
 // import { Popover, Button } from 'antd';
@@ -15,6 +15,9 @@ import { EllipsisOutlined } from "@ant-design/icons";
 
 function Card(props) {
   const params = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting]= useState(false);
+  const [isAssigning, setIsAssigning]=useState(false);
   const { baseUrl } = useContext(UserContext);
   // const [openIssue, setOpenIssue]=useState(true);
   const [ContentVisible, setContentVisible] = useState(false);
@@ -71,12 +74,19 @@ function Card(props) {
   };
 
   const handleDelete = async () => {
-    await axios.delete(`${baseUrl}/cards/${card._id}`, {
+    setIsDeleting(true);
+    let res= await axios.delete(`${baseUrl}/cards/${card._id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
       },
     });
+    if (res.status === 200) {
+      message.success(`Issue deleted successfully`);
+    } else {
+      message.error("Failed to delete issue");
+    }
+    setIsDeleting(false);
     getProjectCards();
   };
 
@@ -100,8 +110,9 @@ function Card(props) {
   };
 
   const handleOk = async (values) => {
+    setIsLoading(true);
     try {
-      await axios.post(
+      let res=await axios.post(
         `${baseUrl}/cards/${card._id}/comment`,
         {
           message: values.title,
@@ -113,10 +124,16 @@ function Card(props) {
           },
         }
       );
-
+      if (res.status === 200) {
+        message.success(`Comment added successfully`);
+      } else {
+        message.error("Failed to add comment");
+      }
+      setIsLoading(false);
       setIsModalOpen(false);
       getProjectCards();
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -149,12 +166,13 @@ function Card(props) {
   };
 
   const handleAssigneeOk = async (values) => {
+    setIsAssigning(true);
     try {
       const assigneesArray = values.assignees.map((assignee) =>
         assignee.trim()
       );
 
-      await axios.post(
+      let response= await axios.post(
         `${baseUrl}/cards/${card._id}/assign`,
         {
           id: card._id,
@@ -167,10 +185,16 @@ function Card(props) {
           },
         }
       );
-
+      if (response.status === 200) {
+        message.success(`Issue assigned successfully`);
+      } else {
+        message.error("Failed to assign issue");
+      }
+      setIsAssigning(false);
       setAssigneeModalVisible(false);
       getProjectCards();
     } catch (error) {
+      setIsAssigning(false);
       console.error(error);
     }
   };
@@ -184,6 +208,7 @@ function Card(props) {
       <div className="flex flex-col">
         <Button
           className="mb-2"
+          loading={isDeleting}
           onClick={() => {
             handleDelete();
           }}
@@ -192,6 +217,7 @@ function Card(props) {
         </Button>
         <Button
           className="mb-2"
+          
           onClick={() => {
             setOpen(false);
             showModal();
@@ -275,6 +301,7 @@ function Card(props) {
                       );
                     })}
                   </div>
+                  {console.log(card)}
                   {card?.imageUrl && (
                     <div className="px-5 pt-4 mt-4">
                       <div className="font-medium font-body text-base mb-1">
@@ -356,6 +383,7 @@ function Card(props) {
                       key="ok"
                       type="primary"
                       htmlType="submit"
+                      loading={isLoading}
                       className="ml-[16.5rem]"
                     >
                       OK
@@ -412,6 +440,7 @@ function Card(props) {
                       type="primary"
                       htmlType="submit"
                       className="ml-[16.5rem]"
+                      loading={isAssigning}
                     >
                       OK
                     </Button>
