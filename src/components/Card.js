@@ -16,8 +16,8 @@ import { EllipsisOutlined } from "@ant-design/icons";
 function Card(props) {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting]= useState(false);
-  const [isAssigning, setIsAssigning]=useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   const { baseUrl } = useContext(UserContext);
   // const [openIssue, setOpenIssue]=useState(true);
   const [ContentVisible, setContentVisible] = useState(false);
@@ -53,7 +53,8 @@ function Card(props) {
 
   useEffect(() => {
     if (isModalOpen) {
-      console.log(tags);
+      // console.log(card);
+      // console.log(tags);
     }
   }, [isModalOpen]);
 
@@ -75,7 +76,7 @@ function Card(props) {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    let res= await axios.delete(`${baseUrl}/cards/${card._id}`, {
+    let res = await axios.delete(`${baseUrl}/cards/${card._id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
@@ -112,7 +113,7 @@ function Card(props) {
   const handleOk = async (values) => {
     setIsLoading(true);
     try {
-      let res=await axios.post(
+      let res = await axios.post(
         `${baseUrl}/cards/${card._id}/comment`,
         {
           message: values.title,
@@ -172,7 +173,7 @@ function Card(props) {
         assignee.trim()
       );
 
-      let response= await axios.post(
+      let response = await axios.post(
         `${baseUrl}/cards/${card._id}/assign`,
         {
           id: card._id,
@@ -217,7 +218,6 @@ function Card(props) {
         </Button>
         <Button
           className="mb-2"
-          
           onClick={() => {
             setOpen(false);
             showModal();
@@ -247,9 +247,39 @@ function Card(props) {
     setOpen(!open);
   };
 
-  const onRadioChange = (e) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
+  function convertDate(dateString) {
+    const [day, month, year] = dateString.split("/").map(Number);
+    const jsDate = new Date(year, month - 1, day);
+    const originalDate = jsDate.toISOString();
+
+    return originalDate;
+  }
+
+  const handleDateChange = async (dateString) => {
+    const deadline = convertDate(dateString);
+
+    try {
+      let response = await axios.patch(
+        `${baseUrl}/cards/${card._id}/deadline`,
+        {
+          deadline: deadline,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        message.success(`Deadline set successfully`);
+        console.log(response.data.card);
+      } else {
+        message.error("Failed to set deadline");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -267,7 +297,7 @@ function Card(props) {
             >
               <div className="relative">
                 <div
-                  onClick={handleEllipsisClick}
+                  // onClick={handleEllipsisClick}
                   className="hover:bg-transparent"
                 >
                   <Button
@@ -301,7 +331,7 @@ function Card(props) {
                       );
                     })}
                   </div>
-                  {console.log(card)}
+                  {/* {console.log(card)} */}
                   {card?.imageUrl && (
                     <div className="px-5 pt-4 mt-4">
                       <div className="font-medium font-body text-base mb-1">
@@ -337,22 +367,18 @@ function Card(props) {
                         ))}
                       </div>
                     )}
-                    {card?.startDate && (
-                      <div className="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
-                        <DatePicker
-                          defaultValue={dayjs(card?.startDate, dateFormat)}
-                          format={dateFormat}
-                        />
-                      </div>
-                    )}
-                    {!card?.startDate && (
-                      <div class="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
-                        <DatePicker
-                          defaultValue={dayjs()}
-                          format={dateFormat}
-                        />
-                      </div>
-                    )}
+                    {console.log(card)}
+                    <div className="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
+                      <DatePicker
+                        format={dateFormat}
+                        defaultValue={
+                          card.deadline ? dayjs(card?.deadline) : null
+                        }
+                        onChange={(date, dateString) =>
+                          handleDateChange(dateString)
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

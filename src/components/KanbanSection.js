@@ -90,8 +90,9 @@ const KanbanSection = () => {
   };
 
   const updateProjectCards = async (id, categoryIndex) => {
+    // console.log("update called");
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `${baseUrl}/cards/${id}`,
         {
           category: Columns[categoryIndex],
@@ -274,23 +275,20 @@ const KanbanSection = () => {
           {project.name ? (
             <div className="flex justify-between ml-5 items-center mb-5">
               <div className="flex space-x-4 items-center">
-              <div className=" whitespace-nowrap title text-3xl font-semibold  font-title ">
-                {project.name}
-                
-              </div>
-              <div className="ml-4 text-3xl mb-1">
-              <a
+                <div className=" whitespace-nowrap title text-3xl font-semibold  font-title ">
+                  {project.name}
+                </div>
+                <div className="ml-4 text-3xl mb-1">
+                  <a
                     href={`https://github.com/${project.owner.username}/${project.name}`}
                   >
                     <GithubOutlined></GithubOutlined>
-                  
                   </a>
-                    
                 </div>
               </div>
-              
+
               <Dropdown.Button
-              className="my-5"
+                className="my-5"
                 onClick={() => {
                   if (!isOwner) return;
                   setOpen(true);
