@@ -26,6 +26,24 @@ const Pomodoro = (props) => {
             <tr>
               <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                 <h5 className="font-medium text-black dark:text-white">
+                  Maximum Possible Focus Time
+                </h5>
+              </td>
+              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                <p className="text-black dark:text-white">
+                  {timers.maximumFocusTime/60} minutes
+                </p>
+              </td>
+              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                
+              </td>
+              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                <div className="flex items-center space-x-3.5"></div>
+              </td>
+            </tr>
+            <tr>
+              <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                <h5 className="font-medium text-black dark:text-white">
                   Productivity
                 </h5>
               </td>
@@ -50,12 +68,12 @@ const Pomodoro = (props) => {
             <tr>
               <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                 <h5 className="font-medium text-black dark:text-white">
-                  Total Focus Time
+                  Your Focus Time
                 </h5>
               </td>
               <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                 <p className="text-black dark:text-white">
-                  {timers.totalFocusTime} minutes
+                  {timers.totalFocusTime} seconds
                 </p>
               </td>
               <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -72,38 +90,14 @@ const Pomodoro = (props) => {
               </td>
             </tr>
             <tr>
-              <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                <h5 className="font-medium text-black dark:text-white">
-                  Maximum Focus Time
-                </h5>
-              </td>
-              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                <p className="text-black dark:text-white">
-                  {timers.maximumFocusTime} seconds
-                </p>
-              </td>
-              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                <p
-                  className={`inline-flex rounded-full ${
-                    timers.maximumFocusTime < 1000 ? "bg-success" : "bg-danger"
-                  } bg-opacity-100 py-1 px-3 text-sm font-medium text-white`}
-                >
-                  {timers.maximumFocusTime < 1000 ? "High" : "Low"}
-                </p>
-              </td>
-              <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                <div className="flex items-center space-x-3.5"></div>
-              </td>
-            </tr>
-            <tr>
               <td className="py-5 px-4 pl-9 xl:pl-11">
                 <h5 className="font-medium text-black dark:text-white">
-                  Total Break Time
+                  Your Break Time
                 </h5>
               </td>
               <td className="py-5 px-4">
                 <p className="text-black dark:text-white">
-                  {timers.totalBreakTime} minutes
+                  {timers.totalBreakTime} seconds
                 </p>
               </td>
               <td className="py-5 px-4">
