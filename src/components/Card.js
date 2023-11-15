@@ -339,8 +339,10 @@ function Card(props) {
                   )}
                   {!card?.imageUrl && (
                     <div className="px-5">
-                      <div className="font-medium font-body text-base mb-1">
-                        {card?.title}
+                      <div className="font-medium font-body text-base mb-1 cursor-pointer">
+
+                      <a href={`https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`}>{card?.title}</a> 
+                        
                       </div>
                       <p className="font-body text-gray-500 text-base">
                         {card?.description}

@@ -1,10 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "../../../WorkWise-Backend"
-		},
-		{
-			"path": "../.."
-		}
-	]
+    "folders": [
+        {
+            "path": "../../../WorkWise-Backend"
+        },
+        {
+            "path": "../.."
+        }
+    ]
 }
