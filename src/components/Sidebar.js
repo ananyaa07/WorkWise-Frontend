@@ -49,7 +49,7 @@ const Sidebar = () => {
       // console.log(projects);
       setProjects(projects);
       setIsLoadingProjects(false);
-      console.log(projects);
+      // console.log(projects);
     } catch (error) {
       setIsLoadingProjects(false);
       console.error("Error fetching projects:", error);
@@ -57,11 +57,11 @@ const Sidebar = () => {
   };
 
   const showModal = () => {
-    console.log(projectTitle);
+    // console.log(projectTitle);
     setOpen(true);
   };
   const handleOk = async () => {
-    console.log(projectTitle);
+    // console.log(projectTitle);
     setConfirmLoading(true);
     await createProject(projectTitle, projectDesc, isPrivate);
     setConfirmLoading(false);
