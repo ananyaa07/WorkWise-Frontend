@@ -8,7 +8,7 @@ import Column from "./Column";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
 import { Spin } from "antd";
-import { GithubOutlined, UserOutlined } from "@ant-design/icons";
+import {BarChartOutlined, GithubOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -287,7 +287,8 @@ const KanbanSection = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="flex space-x-5 items-center">
+                <BarChartOutlined className="border px-1 py-1 border-gray-400 rounded-md"/>
                 <Dropdown.Button
                   className="my-5"
                   onClick={() => {
@@ -301,6 +302,7 @@ const KanbanSection = () => {
                 >
                   {isOwner ? "Add Collaborator" : "Collaborators"}
                 </Dropdown.Button>
+                
               </div>
             </div>
           ) : (
