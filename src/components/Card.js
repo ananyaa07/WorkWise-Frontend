@@ -14,6 +14,26 @@ import { UserContext } from "../utils/contexts/User.js";
 import { EllipsisOutlined } from "@ant-design/icons";
 
 function Card(props) {
+
+
+  const [state, setState] = useState("open"); // Default state is open
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+
+  useEffect(() => {
+    console.log(props.card);
+  }, [props.card]);
+
+  const showUpdateModal = async () => {
+    setUpdateModalVisible(true);
+    form.setFieldsValue({
+      title: card.title,
+      description: card.description,
+      tags: [...card.tags.map((tag) => tag.name)],
+      assignees: [...card.issuedTo.map((assignee) => assignee.username)],
+    });
+  };
+
+
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -57,6 +77,12 @@ function Card(props) {
       // console.log(tags);
     }
   }, [isModalOpen]);
+
+  const disabledDate = (current) => {
+    // Disable dates before today
+    return current && current < dayjs().startOf('day');
+  };
+
 
   const getProjectCards = async () => {
     for (let i = 0; i < Columns.length; i++) {
@@ -141,24 +167,8 @@ function Card(props) {
     setIsModalOpen(false);
   };
 
-  const onFinish = async (values) => {
-    await axios.put(
-      `${baseUrl}/cards/${card._id}`,
-      {
-        title: values.title,
-        description: values.description,
-        tags: tags,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-        },
-      }
-    );
-    setIsModalOpen(false);
-    getProjectCards();
-  };
+  
+ 
 
   const showAssigneeModal = () => {
     setAssigneeModalVisible(true);
@@ -205,14 +215,14 @@ function Card(props) {
   const content = (
     <>
       <div className="flex flex-col">
-        <Button
+          <Button
           className="mb-2"
-          loading={isDeleting}
           onClick={() => {
-            handleDelete();
+            setOpen(false);
+            showUpdateModal(); 
           }}
         >
-          Delete
+          Update
         </Button>
         <Button
           className="mb-2"
@@ -240,6 +250,43 @@ function Card(props) {
     </>
   );
 
+
+  const onFinish = async (values) => {
+    const { title,description, tags, state } = values;
+  
+    const newTags = tags.map((tag) => {
+      return { name: tag };
+    });
+
+
+    await axios.patch(
+      `${baseUrl}/cards/${card._id}`,
+      {
+        title,
+        category:card.category,
+        description,
+        tags : newTags,
+        state,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+        },
+      }
+    );
+  
+    setIsModalOpen(false);
+  
+    if (state === "closed") {
+      handleDelete();
+      
+    } else {
+      getProjectCards();
+    }
+   
+  };
+
   const handleEllipsisClick = () => {
     setOpen(!open);
   };
@@ -252,7 +299,7 @@ function Card(props) {
     return originalDate;
   }
 
-  const handleDateChange = async (dateString) => {
+    const handleDateChange = async (date, dateString) => {
     const deadline = convertDate(dateString);
 
     try {
@@ -270,7 +317,6 @@ function Card(props) {
       );
       if (response.status === 200) {
         message.success(`Deadline set successfully`);
-        // console.log(response.data.card);
       } else {
         message.error("Failed to set deadline");
       }
@@ -284,6 +330,79 @@ function Card(props) {
       {(provided, snapshot) => {
         return (
           <>
+
+{updateModalVisible && (
+  <Modal
+    destroyOnClose={true}
+    title="Update Your Issue"
+    visible={updateModalVisible}
+    footer={null}
+    onCancel={() => setUpdateModalVisible(false)}
+  >
+    <Form
+      form={form}
+      name="updateDetailsForm"
+      labelCol={{ span: 6 }}
+      wrapperCol={{ span: 16 }}
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      autoComplete="off"
+      className="my-8"
+    >
+      <Form.Item
+        label="Issue Title"
+        name="title"
+        rules={[{ required: true, message: 'Please input the title!' }]}
+      >
+        <Input placeholder="Title" />
+      </Form.Item>
+
+      <Form.Item
+        label="Issue Description"
+        name="description"
+        rules={[{ required: true, message: 'Please input the description!' }]}
+      >
+        <Input.TextArea placeholder="Description" />
+      </Form.Item>
+
+      <Form.Item
+        label="Tags"
+        name="tags"
+      >
+        <Select mode="tags" style={{ width: '100%' }} placeholder="Tags">
+        
+        </Select>
+      </Form.Item>
+
+      
+
+      <Form.Item
+  label="State"
+  name="state"
+  initialValue="open" 
+>
+  <Select onChange={
+    (value) => {
+      setState(value);
+    }
+  }>
+    <Select.Option value="open">open</Select.Option>
+    <Select.Option value="closed">closed</Select.Option>
+  </Select>
+</Form.Item>
+
+     
+
+<Form.Item className=" flex justify-end px-10">
+            <Button htmlType="submit" className="" loading={isLoading}>
+              Update
+            </Button>
+          </Form.Item>
+    </Form>
+  </Modal>
+)}
+
+
             <Popover
               placement="right"
               title={text}
@@ -355,29 +474,30 @@ function Card(props) {
                   <div className="flex justify-between px-5 pt-3">
                     {card?.issuedTo.length !== 0 && (
                       <div className="flex items-center">
-                        {card.issuedTo.map((assignee) => (
-                          <Image
-                            key={assignee.username}
-                            width={20}
-                            src={assignee.avatar_url}
-                            alt={assignee.avatar_url}
-                            preview={false}
-                            className="mr-2 rounded-full"
-                          />
-                        ))}
+                        {card?.issuedTo.length !== 0 && (
+                <div className="flex items-center">
+                  {card.issuedTo.map((assignee) => (
+                    <Image
+                      key={assignee.username}
+                      width={20}
+                      src={assignee.avatar_url}
+                      alt={assignee.avatar_url}
+                      preview={false}
+                      className="mr-2 rounded-full"
+                    />
+                  ))}
+                </div>
+              )}
                       </div>
                     )}
                     <div className="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
-                      <DatePicker
-                        format={dateFormat}
-                        defaultValue={
-                          card.deadline ? dayjs(card?.deadline) : null
-                        }
-                        onChange={(date, dateString) =>
-                          handleDateChange(dateString)
-                        }
-                      />
-                    </div>
+                <DatePicker
+                  format={dateFormat}
+                  defaultValue={card.deadline ? dayjs(card?.deadline) : null}
+                  onChange={handleDateChange}
+                  disabledDate={disabledDate}
+                />
+              </div>
                   </div>
                 </div>
               </div>

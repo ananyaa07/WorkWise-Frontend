@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function Date1() {
   const [date, setDate] = useState('');
-  const month = ['January','February','March','April','May','June','July','August','September','October','November','December',];
+  const month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -10,7 +10,12 @@ export default function Date1() {
       let monthname = month[today.getMonth()];
       let day = addzero(today.getDate());
       let year = today.getFullYear();
-      setDate(`${monthname} ${day}, ${year}`);
+      let currentDate = new Date(`${monthname} ${day}, ${year}`);
+      
+      // Check if the date is not before today before updating the state
+      if (currentDate.getTime() >= today.getTime()) {
+        setDate(`${monthname} ${day}, ${year}`);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
