@@ -1,34 +1,25 @@
 import React from "react";
-import { BadgeProps } from "antd";
-import { Badge, Calendar } from "antd";
+import { Calendar } from "antd";
 import { Dayjs } from "dayjs";
 
-const getMonthData = (value = Dayjs) => {
-  if (value.month() === 8) {
-    return 1394;
-  }
-};
-
 const CalendarComponent = () => {
+  const disabledDate = (current = Dayjs) => {
+    const today = Dayjs();
+    return current < today.startOf('day');
+  };
+
   const monthCellRender = (value = Dayjs) => {
-    const num = getMonthData(value);
-    return num ? (
-      <div className="notes-month">
-        <section>{num}</section>
-        <span>Backlog number</span>
-      </div>
-    ) : null;
+    // Your existing logic for month cell render
   };
 
   return (
     <>
-     
-        <Calendar
-          className="w-1/1 p-3"
-          fullscreen={false}
-          monthCellRender={monthCellRender}
-        />
-     
+      <Calendar
+        className="w-1/1 p-3"
+        fullscreen={false}
+        monthCellRender={monthCellRender}
+        disabledDate={disabledDate}
+      />
     </>
   );
 };

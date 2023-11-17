@@ -15,286 +15,388 @@ import { EllipsisOutlined } from "@ant-design/icons";
 import Details from "./Details.js";
 
 function Card(props) {
-  const params = useParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isAssigning, setIsAssigning] = useState(false);
-  const { baseUrl } = useContext(UserContext);
-  // const [openIssue, setOpenIssue]=useState(true);
-  const [ContentVisible, setContentVisible] = useState(false);
-  const [prModalOpen, setPrModalOpen] = useState(false);
-  const card = props.card;
-  const dateFormat = "DD/MM/YYYY";
-  const text = <span>Actions</span>;
-  let cardsData = [[], [], [], []];
-  const Columns = ["backlog", "todo", "in-progress", "review"];
-  const [imgUrl, setImgUrl] = useState(card?.imageUrl);
-  const [priority, setPriority] = useState(card?.priority);
-  const [open, setOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [form] = Form.useForm();
-  const [value, setValue] = useState(1);
-  const [comment, setComment] = useState("");
-  const [assigneeInput, setAssigneeInput] = useState("");
-  const [assigneeModalVisible, setAssigneeModalVisible] = useState(false);
+	const [state, setState] = useState("open"); // Default state is open
+	const [updateModalVisible, setUpdateModalVisible] = useState(false);
 
-  function getNames(objArray) {
-    const names = [];
+	useEffect(() => {
+		console.log(props.card);
+	}, [props.card]);
 
-    for (let i = 0; i < objArray.length; i++) {
-      const obj = objArray[i];
-      const name = obj.name;
+	const showUpdateModal = async () => {
+		setUpdateModalVisible(true);
+		form.setFieldsValue({
+			title: card.title,
+			description: card.description,
+			tags: [...card.tags.map((tag) => tag.name)],
+			assignees: [...card.issuedTo.map((assignee) => assignee.username)],
+		});
+	};
 
-      names.push(name);
-    }
+	const params = useParams();
+	const [isLoading, setIsLoading] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [isAssigning, setIsAssigning] = useState(false);
+	const { baseUrl } = useContext(UserContext);
+	// const [openIssue, setOpenIssue]=useState(true);
+	const [ContentVisible, setContentVisible] = useState(false);
+	const [prModalOpen, setPrModalOpen] = useState(false);
+	const card = props.card;
+	const dateFormat = "DD/MM/YYYY";
+	const text = <span>Actions</span>;
+	let cardsData = [[], [], [], []];
+	const Columns = ["backlog", "todo", "in-progress", "review"];
+	const [imgUrl, setImgUrl] = useState(card?.imageUrl);
+	const [priority, setPriority] = useState(card?.priority);
+	const [open, setOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = React.useState(false);
+	const [form] = Form.useForm();
+	const [value, setValue] = useState(1);
+	const [comment, setComment] = useState("");
+	const [assigneeInput, setAssigneeInput] = useState("");
+	const [assigneeModalVisible, setAssigneeModalVisible] = useState(false);
 
-    return names;
-  }
+	function getNames(objArray) {
+		const names = [];
 
-  const [tags, setTags] = useState(getNames(card?.tags));
+		for (let i = 0; i < objArray.length; i++) {
+			const obj = objArray[i];
+			const name = obj.name;
 
-  useEffect(() => {
-    if (isModalOpen) {
-      // console.log(card);
-      // console.log(tags);
-    }
-  }, [isModalOpen]);
+			names.push(name);
+		}
 
-  const getProjectCards = async () => {
-    for (let i = 0; i < Columns.length; i++) {
-      const res = await axios.get(
-        `${baseUrl}/projects/${params.section}/cards/${Columns[i]}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        }
-      );
-      // console.log(res.data);
-      cardsData[i] = res.data.cards;
-    }
-    props.setElements(cardsData);
-  };
+		return names;
+	}
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    let res = await axios.delete(`${baseUrl}/cards/${card._id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-      },
-    });
-    if (res.status === 200) {
-      message.success(`Issue deleted successfully`);
-    } else {
-      message.error("Failed to delete issue");
-    }
-    setIsDeleting(false);
-    getProjectCards();
-  };
+	const [tags, setTags] = useState(getNames(card?.tags));
 
-  const handleOpenChange = (newOpen) => {
-    setOpen(newOpen);
-  };
+	useEffect(() => {
+		if (isModalOpen) {
+			// console.log(card);
+			// console.log(tags);
+		}
+	}, [isModalOpen]);
 
-  const handleTagChange = (newTags) => {
-    setTags(newTags);
-  };
+	const disabledDate = (current) => {
+		// Disable dates before today
+		return current && current < dayjs().startOf("day");
+	};
 
-  const onChange = (value) => {
-    setPriority(value);
-  };
+	const getProjectCards = async () => {
+		for (let i = 0; i < Columns.length; i++) {
+			const res = await axios.get(
+				`${baseUrl}/projects/${params.section}/cards/${Columns[i]}`,
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+					},
+				}
+			);
+			// console.log(res.data);
+			cardsData[i] = res.data.cards;
+		}
+		props.setElements(cardsData);
+	};
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+	const handleDelete = async () => {
+		setIsDeleting(true);
+		let res = await axios.delete(`${baseUrl}/cards/${card._id}`, {
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+			},
+		});
+		if (res.status === 200) {
+			message.success(`Issue deleted successfully`);
+		} else {
+			message.error("Failed to delete issue");
+		}
+		setIsDeleting(false);
+		getProjectCards();
+	};
 
-  const handleOk = async (values) => {
+	const handleOpenChange = (newOpen) => {
+		setOpen(newOpen);
+	};
+
+	const handleTagChange = (newTags) => {
+		setTags(newTags);
+	};
+
+	const onChange = (value) => {
+		setPriority(value);
+	};
+
+	const showModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const handleOk = async (values) => {
+		setIsLoading(true);
+		try {
+			let res = await axios.post(
+				`${baseUrl}/cards/${card._id}/comment`,
+				{
+					message: values.title,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+					},
+				}
+			);
+			if (res.status === 200) {
+				message.success(`Comment added successfully`);
+			} else {
+				message.error("Failed to add comment");
+			}
+			setIsLoading(false);
+			setIsModalOpen(false);
+			getProjectCards();
+		} catch (error) {
+			setIsLoading(false);
+			console.error(error);
+		}
+	};
+	const handleCancel = () => {
+		form.resetFields();
+		setIsModalOpen(false);
+	};
+
+	const showAssigneeModal = () => {
+		setAssigneeModalVisible(true);
+	};
+
+	const handleAssigneeOk = async (values) => {
+		setIsAssigning(true);
+		try {
+			const assigneesArray = values.assignees.map((assignee) =>
+				assignee.trim()
+			);
+
+			let response = await axios.post(
+				`${baseUrl}/cards/${card._id}/assign`,
+				{
+					id: card._id,
+					assignees: assigneesArray,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+					},
+				}
+			);
+			if (response.status === 200) {
+				message.success(`Issue assigned successfully`);
+			} else {
+				message.error("Failed to assign issue");
+			}
+			setIsAssigning(false);
+			setAssigneeModalVisible(false);
+			getProjectCards();
+		} catch (error) {
+			setIsAssigning(false);
+			console.error(error);
+		}
+	};
+
+	const handleAssigneeCancel = () => {
+		setAssigneeModalVisible(false);
+	};
+
+	const content = (
+		<>
+			<div className="flex flex-col">
+				<Button
+					className="mb-2"
+					onClick={() => {
+						setOpen(false);
+						showUpdateModal();
+					}}
+				>
+					Update
+				</Button>
+				<Button
+					className="mb-2"
+					onClick={() => {
+						setOpen(false);
+						showModal();
+					}}
+				>
+					Put Comment
+				</Button>
+				{props.collaborators.length !== 0 ? (
+					<Button
+						className="mb-2"
+						onClick={() => {
+							setOpen(false);
+							showAssigneeModal();
+						}}
+					>
+						Assign Task
+					</Button>
+				) : (
+					<> </>
+				)}
+			</div>
+		</>
+	);
+
+	const onFinish = async (values) => {
+		const { title, description, tags, state } = values;
+
     setIsLoading(true);
-    try {
-      let res = await axios.post(
-        `${baseUrl}/cards/${card._id}/comment`,
-        {
-          message: values.title,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        }
-      );
-      if (res.status === 200) {
-        message.success(`Comment added successfully`);
-      } else {
-        message.error("Failed to add comment");
-      }
-      setIsLoading(false);
-      setIsModalOpen(false);
-      getProjectCards();
-    } catch (error) {
-      setIsLoading(false);
-      console.error(error);
-    }
-  };
-  const handleCancel = () => {
-    form.resetFields();
-    setIsModalOpen(false);
-  };
 
-  const onFinish = async (values) => {
-    await axios.put(
-      `${baseUrl}/cards/${card._id}`,
-      {
-        title: values.title,
-        description: values.description,
-        tags: tags,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-        },
-      }
-    );
-    setIsModalOpen(false);
-    getProjectCards();
-  };
+		const newTags = tags.map((tag) => {
+			return { name: tag };
+		});
 
-  const showAssigneeModal = () => {
-    setAssigneeModalVisible(true);
-  };
+		await axios.patch(
+			`${baseUrl}/cards/${card._id}`,
+			{
+				title,
+				category: card.category,
+				description,
+				tags: newTags,
+				state,
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+				},
+			}
+		);
 
-  const handleAssigneeOk = async (values) => {
-    setIsAssigning(true);
-    try {
-      const assigneesArray = values.assignees.map((assignee) =>
-        assignee.trim()
-      );
+    setIsLoading(false);
 
-      let response = await axios.post(
-        `${baseUrl}/cards/${card._id}/assign`,
-        {
-          id: card._id,
-          assignees: assigneesArray,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        message.success(`Issue assigned successfully`);
-      } else {
-        message.error("Failed to assign issue");
-      }
-      setIsAssigning(false);
-      setAssigneeModalVisible(false);
-      getProjectCards();
-    } catch (error) {
-      setIsAssigning(false);
-      console.error(error);
-    }
-  };
+		setIsModalOpen(false);
+	  getProjectCards();
+	};
 
-  const handleAssigneeCancel = () => {
-    setAssigneeModalVisible(false);
-  };
+	const handleEllipsisClick = () => {
+		setOpen(!open);
+	};
 
-  const content = (
-    <>
-      <div className="flex flex-col">
-        <Button
-          className="mb-2"
-          loading={isDeleting}
-          onClick={() => {
-            handleDelete();
-          }}
-        >
-          Delete
-        </Button>
-        <Button
-          className="mb-2"
-          onClick={() => {
-            setOpen(false);
-            showModal();
-          }}
-        >
-          Put Comment
-        </Button>
-        {props.collaborators.length !== 0 ? (
-          <Button
-            className="mb-2"
-            onClick={() => {
-              setOpen(false);
-              showAssigneeModal();
-            }}
-          >
-            Assign Task
-          </Button>
-        ) : (
-          <> </>
-        )}
-      </div>
-    </>
-  );
+	function convertDate(dateString) {
+		const [day, month, year] = dateString.split("/").map(Number);
+		const jsDate = new Date(year, month - 1, day);
+		const originalDate = jsDate.toISOString();
 
-  const handleEllipsisClick = () => {
-    setOpen(!open);
-  };
+		return originalDate;
+	}
 
-  function convertDate(dateString) {
-    const [day, month, year] = dateString.split("/").map(Number);
-    const jsDate = new Date(year, month - 1, day);
-    const originalDate = jsDate.toISOString();
+	const handleDateChange = async (date, dateString) => {
+		const deadline = convertDate(dateString);
 
-    return originalDate;
-  }
+		try {
+			let response = await axios.patch(
+				`${baseUrl}/cards/${card._id}/deadline`,
+				{
+					deadline: deadline,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+					},
+				}
+			);
+			if (response.status === 200) {
+				message.success(`Deadline set successfully`);
+			} else {
+				message.error("Failed to set deadline");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-  const handleDateChange = async (dateString) => {
-    const deadline = convertDate(dateString);
-
-    try {
-      let response = await axios.patch(
-        `${baseUrl}/cards/${card._id}/deadline`,
-        {
-          deadline: deadline,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        message.success(`Deadline set successfully`);
-        // console.log(response.data.card);
-      } else {
-        message.error("Failed to set deadline");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return (
-    <Draggable draggableId={card._id} index={props.index}>
-      {(provided, snapshot) => {
-        return (
+	return (
+		<Draggable draggableId={card._id} index={props.index}>
+			{(provided, snapshot) => {
+				return (
 					<>
 						<Modal
 							visible={prModalOpen}
-              width={"40%"}
+							width={"40%"}
 							footer={null}
 							onCancel={() => setPrModalOpen(!prModalOpen)}
-              closeIcon={<></>}
+							closeIcon={<></>}
 						>
-							<Details card={card} setPrModalOpen={setPrModalOpen}/>
+							<Details card={card} setPrModalOpen={setPrModalOpen} />
 						</Modal>
+						{updateModalVisible && (
+							<Modal
+								destroyOnClose={true}
+								title="Update Your Issue"
+								visible={updateModalVisible}
+								footer={null}
+								onCancel={() => setUpdateModalVisible(false)}
+							>
+								<Form
+									form={form}
+									name="updateDetailsForm"
+									labelCol={{ span: 6 }}
+									wrapperCol={{ span: 16 }}
+									initialValues={{ remember: true }}
+									onFinish={onFinish}
+									autoComplete="off"
+									className="my-8"
+								>
+									<Form.Item
+										label="Issue Title"
+										name="title"
+										rules={[
+											{ required: true, message: "Please input the title!" },
+										]}
+									>
+										<Input placeholder="Title" />
+									</Form.Item>
+
+									<Form.Item
+										label="Issue Description"
+										name="description"
+										rules={[
+											{
+												required: true,
+												message: "Please input the description!",
+											},
+										]}
+									>
+										<Input.TextArea placeholder="Description" />
+									</Form.Item>
+
+									<Form.Item label="Tags" name="tags">
+										<Select
+											mode="tags"
+											style={{ width: "100%" }}
+											placeholder="Tags"
+										></Select>
+									</Form.Item>
+
+									<Form.Item label="State" name="state" initialValue="open">
+										<Select
+											onChange={(value) => {
+												setState(value);
+											}}
+										>
+											<Select.Option value="open">open</Select.Option>
+											<Select.Option value="closed">closed</Select.Option>
+										</Select>
+									</Form.Item>
+
+									<Form.Item className=" flex justify-end px-10">
+										<Button htmlType="submit" className="" loading={isLoading}>
+											Update
+										</Button>
+									</Form.Item>
+								</Form>
+							</Modal>
+						)}
 						<Popover
 							placement="right"
 							title={text}
@@ -303,7 +405,7 @@ function Card(props) {
 							onOpenChange={handleOpenChange}
 							trigger="contextMenu"
 						>
-							<div className="relative" onDoubleClick={()=>{setPrModalOpen(true)}}>
+							<div className="relative">
 								<div className="hover:bg-transparent">
 									<Button
 										type="text"
@@ -320,6 +422,7 @@ function Card(props) {
 									{...provided.draggableProps}
 									{...provided.dragHandleProps}
 									className="w-[88%] m-4 h-max bg-[#FFFFFF] rounded-lg overflow-hidden"
+									onDoubleClick={() => setPrModalOpen(true)}
 								>
 									<div className="tags flex justify-start ml-4 mr-4 mt-4 mb-2 overflow-x-scroll">
 										{props.card.tags.map((item, index) => {
@@ -335,9 +438,9 @@ function Card(props) {
 											);
 										})}
 									</div>
-									{console.log(
-										`https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`
-									)}
+									{/* {console.log(
+                    `https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`
+                  )} */}
 									{card?.imageUrl && (
 										<div className="px-5 pt-4 mt-4">
 											<div className="font-medium font-body text-base mb-1">
@@ -353,6 +456,7 @@ function Card(props) {
 											<div className="font-medium font-body text-base mb-1 cursor-pointer">
 												<a
 													href={`https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`}
+													className="hover:underline"
 												>
 													{card?.title}
 												</a>
@@ -365,16 +469,20 @@ function Card(props) {
 									<div className="flex justify-between px-5 pt-3">
 										{card?.issuedTo.length !== 0 && (
 											<div className="flex items-center">
-												{card.issuedTo.map((assignee) => (
-													<Image
-														key={assignee.username}
-														width={20}
-														src={assignee.avatar_url}
-														alt={assignee.avatar_url}
-														preview={false}
-														className="mr-2 rounded-full"
-													/>
-												))}
+												{card?.issuedTo.length !== 0 && (
+													<div className="flex items-center">
+														{card.issuedTo.map((assignee) => (
+															<Image
+																key={assignee.username}
+																width={20}
+																src={assignee.avatar_url}
+																alt={assignee.avatar_url}
+																preview={false}
+																className="mr-2 rounded-full"
+															/>
+														))}
+													</div>
+												)}
 											</div>
 										)}
 										<div className="rounded w-32 py-1 text-sm font-medium font-body text-gray-900 mb-2">
@@ -383,9 +491,8 @@ function Card(props) {
 												defaultValue={
 													card.deadline ? dayjs(card?.deadline) : null
 												}
-												onChange={(date, dateString) =>
-													handleDateChange(dateString)
-												}
+												onChange={handleDateChange}
+												disabledDate={disabledDate}
 											/>
 										</div>
 									</div>
@@ -427,7 +534,6 @@ function Card(props) {
 								</Form>
 							</Modal>
 						}
-
 						{
 							/* Assignee Modal */
 							<Modal
@@ -488,9 +594,9 @@ function Card(props) {
 						}
 					</>
 				);
-      }}
-    </Draggable>
-  );
+			}}
+		</Draggable>
+	);
 }
 
 export default Card;

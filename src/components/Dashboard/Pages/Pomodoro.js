@@ -55,10 +55,18 @@ const Pomodoro = (props) => {
               <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                 <p
                   className={`inline-flex rounded-full ${
-                    timers.productivity > 50 ? "bg-success" : "bg-danger"
+                    timers.productivity > 70
+                      ? "bg-success"
+                      : timers.productivity > 30
+                      ? "bg-yellow-300"
+                      : "bg-danger"
                   } bg-opacity-100 py-1 px-3 text-sm font-medium text-white`}
                 >
-                  {timers.productivity > 50 ? "High" : "Low"}
+                  {timers.productivity > 70
+                    ? "High"
+                    : timers.productivity > 30
+                    ? "Medium"
+                    : "Low"}
                 </p>
               </td>
               <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -79,10 +87,18 @@ const Pomodoro = (props) => {
               <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                 <p
                   className={`inline-flex rounded-full ${
-                    timers.totalFocusTime < 5 ? "bg-success" : "bg-danger"
+                    timers.totalFocusTime < 120
+                      ? "bg-success"
+                      : timers.totalFocusTime < 300
+                      ? "bg-yellow-300"
+                      : "bg-danger"
                   } bg-opacity-100 py-1 px-3 text-sm font-medium text-white`}
                 >
-                  {timers.totalFocusTime < 5 ? "High" : "Low"}
+                  {timers.totalFocusTime < 120
+                    ? "High"
+                    : timers.totalFocusTime < 300
+                    ? "Medium"
+                    : "Low"}
                 </p>
               </td>
               <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -103,10 +119,18 @@ const Pomodoro = (props) => {
               <td className="py-5 px-4">
                 <p
                   className={`inline-flex rounded-full ${
-                    timers.totalBreakTime < 5 ? "bg-success" : "bg-danger"
+                    timers.totalBreakTime < 120
+                      ? "bg-success"
+                      : timers.totalBreakTime < 300
+                      ? "bg-yellow-300"
+                      : "bg-danger"
                   } bg-opacity-100 py-1 px-3 text-sm font-medium text-white`}
                 >
-                  {timers.totalBreakTime < 5 ? "High" : "Low"}
+                  {timers.totalBreakTime < 120
+                    ? "High"
+                    : timers.totalBreakTime < 300
+                    ? "Medium"
+                    : "Low"}
                 </p>
               </td>
               <td className="py-5 px-4">
