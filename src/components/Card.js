@@ -324,9 +324,9 @@ function Card(props) {
                       );
                     })}
                   </div>
-                  {console.log(
+                  {/* {console.log(
                     `https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`
-                  )}
+                  )} */}
                   {card?.imageUrl && (
                     <div className="px-5 pt-4 mt-4">
                       <div className="font-medium font-body text-base mb-1">
@@ -340,9 +340,12 @@ function Card(props) {
                   {!card?.imageUrl && (
                     <div className="px-5">
                       <div className="font-medium font-body text-base mb-1 cursor-pointer">
-
-                      <a href={`https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`}>{card?.title}</a> 
-                        
+                        <a
+                          href={`https://github.com/${card?.projectId.owner.username}/${card?.projectId.name}/issues/${card?.issueNumber}`}
+                          className="hover:underline"
+                        >
+                          {card?.title}
+                        </a>
                       </div>
                       <p className="font-body text-gray-500 text-base">
                         {card?.description}
