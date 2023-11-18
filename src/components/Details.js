@@ -148,9 +148,9 @@ export default function Details({ card, setPrModalOpen }) {
 										<div class="flex flex-shrink-0 ml-2">
 											<p
 												class={`inline-flex px-2 text-xs font-semibold leading-5 ${
-													pr.status === "open"
-														? "text-green-800 bg-green-100"
-														: "text-red-800 bg-red-100"
+													pr.status === "closed"
+														? "text-red-800 bg-red-100"
+														: "text-green-800 bg-green-100"
 												} bg-green-100 rounded-full`}
 											>
 												{pr.status}
