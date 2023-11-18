@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+
 import Cards from "./Cards";
 import { DragDropContext } from "react-beautiful-dnd";
 import ColumnsList from "./ColumnsList";
@@ -7,12 +8,10 @@ import axios from "axios";
 import Column from "./Column";
 import { UserContext } from "../utils/contexts/User.js";
 import { useContext } from "react";
+
 import { Spin } from "antd";
-import {
-  BarChartOutlined,
-  GithubOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import Project from "../components/Dashboard/Pages/Project.js";
+import {BarChartOutlined, GithubOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -33,11 +32,11 @@ const handleMenuClick = (e) => {
   console.log(e);
 };
 
-const KanbanSection = () => {
+const Analysis = () => {
   const [open, setOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
   const [form] = Form.useForm();
   const params = useParams();
-  const navigate = useNavigate();
   const { baseUrl, user } = useContext(UserContext);
   const [isOwner, setIsOwner] = useState(false);
   let cardsData = [[], [], [], []];
@@ -49,6 +48,23 @@ const KanbanSection = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
   const [invitee, setInvitee] = useState("");
+ 
+
+  const getProjects = async () => {
+    const res = await axios.get(`${baseUrl}/projects/cards`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+      },
+    });
+    // console.log(res.data.projects);
+    setProjects(res.data.projects);
+  };
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
 
   const getProjectCards = async () => {
     try {
@@ -87,6 +103,7 @@ const KanbanSection = () => {
         }
       );
       setProject(response.data.project);
+      console.log(response.data.project);
       setIsOwner(response.data.project.owner.username === user.username);
       setCollaborators(response.data.project.collaborators);
     } catch (error) {
@@ -232,51 +249,14 @@ const KanbanSection = () => {
     setInvitee("");
   };
 
+
+  const projectArray = [project];
+    console.log(project._id);
+    console.log(params.section)
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
         <div className=" overflow-auto bg-[#F3F4F8] h-[100vh] w-[max(calc(100%-300px),67vw)] absolute right-0">
           <ColumnsList />
-          <Modal
-            title="Invite collaborators"
-            open={open}
-            onOk={handleOk}
-            confirmLoading={isAdding}
-            onCancel={handleCancel}
-          >
-            <Form
-              form={form}
-              name="basic"
-              labelCol={{
-                span: 8,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              style={{
-                maxWidth: 600,
-              }}
-              autoComplete="off"
-            >
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message:
-                      "Please enter the Github username of the new collaborator",
-                  },
-                ]}
-              >
-                <Input
-                  onChange={(e) => setInvitee(e.target.value)}
-                  value={invitee}
-                  placeholder="Enter the Github username"
-                />
-              </Form.Item>
-            </Form>
-          </Modal>
           {project.name ? (
             <div className="flex justify-between ml-5 items-center mb-5">
               <div className="flex space-x-4 items-center">
@@ -293,12 +273,7 @@ const KanbanSection = () => {
               </div>
 
               <div className="flex space-x-5 items-center">
-                <BarChartOutlined className="border px-1 py-1 border-gray-400 rounded-md" 
-                onClick={() => {
-                  if (!isOwner) return;
-                  // navigate("/");
-                }}
-                />
+                <BarChartOutlined className="border px-1 py-1 border-gray-400 rounded-md"/>
                 <Dropdown.Button
                   className="my-5"
                   onClick={() => {
@@ -312,38 +287,29 @@ const KanbanSection = () => {
                 >
                   {isOwner ? "Add Collaborator" : "Collaborators"}
                 </Dropdown.Button>
+                
+                
               </div>
+              
             </div>
           ) : (
+            
             <div className="title ml-6 mb-8 text-3xl font-semibold font-title">
               <Spin />
             </div>
           )}
-          {isLoading ? (
-            <div className="ml-6 mt-8">
-              <Spin />
-            </div>
-          ) : (
-            // Render your cards when not loading
-            <div className="flex flex-row flex-wrap characters">
-              {/* Render Cards component for each column */}
-              {columnTitles.map((title, index) => (
-                <div className="flex-1" key={title}>
-                  <Cards
-                    id={index}
-                    data={elements[index]}
-                    setElements={setElements}
-                    fullData={elements}
-                    columnTitle={title}
-                    collaborators={collaborators}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <div>
+                    {projects?.map((project) => {
+                    if (project.project._id == params.section) {
+                        
+                        return <Project key={project.id} project={project} />;
+                    }
+                    return null;
+                })}
         </div>
-      </DragDropContext>
+        </div>
+
     </>
   );
 };
-export default KanbanSection;
+export default Analysis;

@@ -17,6 +17,7 @@ import Bookmarks from "./components/Dashboard/Pages/Bookmarks.js";
 import Projects from "./components/Dashboard/Pages/Projects.js";
 import PomodoroPage from "./components/Dashboard/Pages/PomodoroPage.js";
 import Auth from "./pages/auth.js";
+import Analysis from "./components/Analysis.js";
 
 function App() {
   const { setBaseUrl } = useContext(UserContext);
@@ -151,7 +152,9 @@ function AnimatedRoutes() {
               </Route>
               <Route path="/kanban" element={<Kanban />}>
                 <Route path=":section" element={<KanbanSection />} />
+                
               </Route>
+              <Route path="/kanban/:section/stats" element={<Analysis />} />
             </>
           ) : null}
         </Routes>

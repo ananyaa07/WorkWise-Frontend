@@ -23,6 +23,7 @@ export default function Projects() {
     getProjects();
   }, []);
 
+  console.log(projects);
   return (
     <>
       {projects?.map((project) => (

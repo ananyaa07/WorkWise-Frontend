@@ -47,7 +47,7 @@ const Project = ({key, project}) => {
 			},
 		],
 	};
-
+	console.log(project);
 	return (
 		<div className="flex justify-center mb-16">
 			<div className="col-span-12 rounded-sm border w-3/4 border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-5">
