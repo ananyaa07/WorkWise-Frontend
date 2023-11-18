@@ -38,7 +38,7 @@ const menuProps = {
   };
 
 export default function ColumnsList() {
-	const dateFormat2 = "MMM DD, YYYY";
+	
 	const { user } = useContext(UserContext);
   return (
     <div className="h-16 bg-white flex items-center px-4 mb-5 justify-between">
@@ -47,11 +47,7 @@ export default function ColumnsList() {
       </div>
       <div className="others flex items-center">
         <SearchOutlined className="mr-4" />
-        <DatePicker
-          defaultValue={dayjs()}
-          format={dateFormat2}
-          className="mr-4"
-        />
+        <span className="mr-4 border px-2 py-2 border-gray-400 rounded-md text-sm">{dayjs().format('DD-MM-YYYY')}</span>
         <Link to="/settings/profile">
           <Avatar
             size={40}
