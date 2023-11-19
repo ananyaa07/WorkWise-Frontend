@@ -189,6 +189,13 @@ const Sidebar = () => {
     setDark(!dark);
   };
 
+  const confirmDelete = (projectId) => {
+    const shouldDelete = window.confirm("Are you sure you want to delete this project?");
+    if (shouldDelete) {
+      deleteProject(projectId);
+    }
+  };
+
   const onRadioChange = (e) => {
     console.log("radio checked", e.target.value);
     setValue(e.target.value);
@@ -289,15 +296,16 @@ const Sidebar = () => {
             project._id === params.section ? (
               <div className="flex items-center">
                 <SItem key={i} keyno={i} project={project} selected />
-                <div className="" onClick={() => deleteProject(project._id)}>
-                  {isDeleting ? (
-                    <div className="ml-2">
-                      <Spin size="small" />
-                    </div>
-                  ) : (
-                    <AiOutlineDelete className="text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
-                  )}
-                </div>
+                <div className="" onClick={() => confirmDelete(project._id)}>
+  {isDeleting ? (
+    <div className="ml-2">
+      <Spin size="small" />
+    </div>
+  ) : (
+    <AiOutlineDelete className="text-black text-lg ml-2 cursor-pointer hover:text-red-700"></AiOutlineDelete>
+  )}
+</div>
+
               </div>
             ) : (
               <SItem key={i} keyno={i} project={project} />
