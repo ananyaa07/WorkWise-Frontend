@@ -28,12 +28,14 @@ import {
   Avatar,
 } from "antd";
 import IndividualStats from "./IndividualStats.js";
+// import CollaboratorsStats from "./CollaboratorStats.js";
 
 const handleMenuClick = (e) => {
   console.log(e);
 };
 
 const Analysis = () => {
+  
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [form] = Form.useForm();
@@ -42,6 +44,9 @@ const Analysis = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [project, setProject] = useState({});
   const [collaborators, setCollaborators] = useState([]);
+
+  const [collaboratorsData, setCollaboratorsData] = useState([]);
+  
 
   const getProject = async () => {
     try {
@@ -108,6 +113,8 @@ const Analysis = () => {
     if (project.name) getProjectStats();
   }, [project]);
 
+
+
   return (
     <>
       <div className=" overflow-auto bg-[#F3F4F8] h-[100vh] w-[max(calc(100%-300px),67vw)] absolute right-0">
@@ -155,7 +162,14 @@ const Analysis = () => {
         <div>
           {/* {console.log(projects[0])} */}
           {projects[0] ? (
+            <>
             <Project key={projects[0]._id} project={projects[0]} />
+            <div className="ml-39 overflow-x-auto whitespace-nowrap flex -space-x-12 mb-16">
+              {projects[0].collaboratorStats.map((collaborator, index) => (
+                <IndividualStats key={index} collaborator={collaborator} />
+              ))}
+            </div>
+            </>
           ) : (
             <Spin />
           )}
@@ -165,3 +179,4 @@ const Analysis = () => {
   );
 };
 export default Analysis;
+
