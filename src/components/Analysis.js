@@ -23,6 +23,7 @@ import {
   Tooltip,
   Avatar,
 } from "antd";
+import IndividualStats from "./IndividualStats.js";
 
 const handleButtonClick = (e) => {
   message.info("Click on left button.");
@@ -308,7 +309,7 @@ const Analysis = () => {
                 })}
         </div>
         </div>
-
+        
     </>
   );
 };
