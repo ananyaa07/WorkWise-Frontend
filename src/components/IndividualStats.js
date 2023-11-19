@@ -104,7 +104,7 @@ const IndividualStats = ({collaborator}) => {
                 <div className="-mx-8 flex flex-wrap items-center justify-center gap-y-3">
 					<div className="w-full px-8 sm:w-1/2">
 						<div className="flex w-full items-center">
-							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-primary"></span>
+							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#10B981]"></span>
 							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
 								<span> Backlog </span>
 								<span> {collaborator.backlog} </span>
@@ -113,7 +113,7 @@ const IndividualStats = ({collaborator}) => {
 					</div>
 					<div className="w-full px-8 sm:w-1/2">
 						<div className="flex w-full items-center">
-							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#6577F3]"></span>
+							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#375E83]"></span>
 							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
 								<span> ToDo </span>
 								<span> {collaborator.todo} </span>
@@ -122,7 +122,7 @@ const IndividualStats = ({collaborator}) => {
 					</div>
 					<div className="w-full px-8 sm:w-1/2">
 						<div className="flex w-full items-center">
-							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#8FD0EF]"></span>
+							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#259AE6]"></span>
 							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
 								<span> In-Progress </span>
 								<span> {collaborator.inProgress} </span>
@@ -131,7 +131,7 @@ const IndividualStats = ({collaborator}) => {
 					</div>
 					<div className="w-full px-8 sm:w-1/2">
 						<div className="flex w-full items-center">
-							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#0FADCF]"></span>
+							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#FFA70B]"></span>
 							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
 								<span> Review </span>
 								<span> {collaborator.review} </span>
