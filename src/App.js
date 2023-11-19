@@ -152,9 +152,8 @@ function AnimatedRoutes() {
               </Route>
               <Route path="/kanban" element={<Kanban />}>
                 <Route path=":section" element={<KanbanSection />} />
-                
+                <Route path=":section/stats" element={<Analysis />} />
               </Route>
-              <Route path="/kanban/:section/stats" element={<Analysis />} />
             </>
           ) : null}
         </Routes>

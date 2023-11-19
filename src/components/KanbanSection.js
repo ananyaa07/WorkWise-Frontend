@@ -150,7 +150,7 @@ const KanbanSection = () => {
 
   useEffect(() => {
     getProject();
-    getAllCollaborators();
+    // getAllCollaborators();
   }, []);
 
   const removeFromList = (list, index) => {
@@ -293,12 +293,11 @@ const KanbanSection = () => {
               </div>
 
               <div className="flex space-x-5 items-center">
-                <BarChartOutlined className="border px-1 py-1 border-gray-400 rounded-md" 
-                onClick={() => {
-                  if (!isOwner) return;
-                  // navigate("/");
-                }}
-                />
+                {isOwner && (
+                  <Link to={`/kanban/${params.section}/stats`}>
+                    <BarChartOutlined className="border px-1 py-1 border-gray-400 rounded-md" />
+                  </Link>
+                )}
                 <Dropdown.Button
                   className="my-5"
                   onClick={() => {
