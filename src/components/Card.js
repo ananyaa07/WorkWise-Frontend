@@ -35,7 +35,7 @@ function Card(props) {
 
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isFetchingCards, setIsFetchingCards] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isAssigning, setIsAssigning] = useState(false);
   const { baseUrl } = useContext(UserContext);
@@ -102,7 +102,7 @@ function Card(props) {
   };
 
   const handleDelete = async () => {
-    setIsDeleting(true);
+    setIsUpdating(true);
     let res = await axios.delete(`${baseUrl}/cards/${card._id}`, {
       headers: {
         "Content-Type": "application/json",
@@ -111,10 +111,11 @@ function Card(props) {
     });
     if (res.status === 200) {
       message.success(`Issue deleted successfully`);
+      setUpdateModalVisible(false);
     } else {
       message.error("Failed to delete issue");
     }
-    setIsDeleting(false);
+    setIsUpdating(false);
     getProjectCards();
   };
 
@@ -251,7 +252,10 @@ function Card(props) {
   const onFinish = async (values) => {
     const { title, description, tags, state } = values;
     setIsUpdating(true);
-
+    if (state == "deleted") {
+      handleDelete();
+      return;
+    }
     const newTags = tags.map((tag) => {
       return { name: tag };
     });
@@ -379,14 +383,21 @@ function Card(props) {
                     ></Select>
                   </Form.Item>
 
-                  <Form.Item label="State" name="state" initialValue="open">
+                  <Form.Item
+                    label="Update Status"
+                    name="state"
+                    initialValue="open"
+                  >
                     <Select
                       onChange={(value) => {
                         setState(value);
                       }}
                     >
-                      <Select.Option value="open">open</Select.Option>
-                      <Select.Option value="closed">closed</Select.Option>
+                      <Select.Option value="open">Open</Select.Option>
+                      <Select.Option value="closed">
+                        Close as completed
+                      </Select.Option>
+                      <Select.Option value="deleted">Delete</Select.Option>
                     </Select>
                   </Form.Item>
 

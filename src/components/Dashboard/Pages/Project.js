@@ -12,8 +12,15 @@ const Project = ({ key, project }) => {
     chart: {
       type: "donut",
     },
-    colors: ["#10B981", "#375E83", "#259AE6", "#FFA70B"],
-    labels: ["Backlog", "ToDo", "In-Progress", "Review"],
+    colors: ["#10B981", "#375E83", "#259AE6", "#FFA70B", "#AA3333", "#6366F1"],
+    labels: [
+      "Backlog",
+      "ToDo",
+      "In-Progress",
+      "Review",
+      "Completed On Time",
+      "Completed Late",
+    ],
     legend: {
       show: true,
       position: "bottom",
@@ -128,6 +135,24 @@ const Project = ({ key, project }) => {
               <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
                 <span> Review </span>
                 <span> {project.project.series[3]} </span>
+              </p>
+            </div>
+          </div>
+          <div className="w-full px-8 sm:w-1/2">
+            <div className="flex w-full items-center">
+              <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#FFA70B]"></span>
+              <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
+                <span> Completed On Time </span>
+                <span> {project.project.series[4]} </span>
+              </p>
+            </div>
+          </div>
+          <div className="w-full px-8 sm:w-1/2">
+            <div className="flex w-full items-center">
+              <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#FFA70B]"></span>
+              <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
+                <span> Completed Late</span>
+                <span> {project.project.series[5]} </span>
               </p>
             </div>
           </div>
