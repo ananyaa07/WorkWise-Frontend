@@ -91,7 +91,7 @@ const Project = ({ key, project }) => {
           </div>
         </div>
 
-        <div className="mb-2">
+        <div className="mb-6">
           <div id="chartThree" className="mx-auto flex justify-center">
             <ReactApexChart
               options={options}
@@ -140,7 +140,7 @@ const Project = ({ key, project }) => {
           </div>
           <div className="w-full px-8 sm:w-1/2">
             <div className="flex w-full items-center">
-              <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#FFA70B]"></span>
+              <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#AA3333]"></span>
               <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
                 <span> Completed On Time </span>
                 <span> {project.project.series[4]} </span>
@@ -149,7 +149,7 @@ const Project = ({ key, project }) => {
           </div>
           <div className="w-full px-8 sm:w-1/2">
             <div className="flex w-full items-center">
-              <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#FFA70B]"></span>
+              <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#6366F1]"></span>
               <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
                 <span> Completed Late</span>
                 <span> {project.project.series[5]} </span>

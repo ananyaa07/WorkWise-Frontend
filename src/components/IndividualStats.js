@@ -15,11 +15,12 @@ const IndividualStats = ({collaborator}) => {
 		chart: {
 			type: "donut",
 		},
-		colors: ["#10B981", "#375E83", "#259AE6", "#FFA70B"],
-		labels: ["Backlog", "ToDo", "In-Progress", "Review"],
+		colors: ["#10B981", "#375E83", "#259AE6", "#FFA70B","#AA3333","#6366F1"],
+		labels: ["Backlog", "ToDo", "In-Progress", "Review", "Completed On Time",
+		"Completed Late"],
 		legend: {
 			show: true,
-			position: "bottom",
+			position: "bottom"
 		},
 		plotOptions: {
 			pie: {
@@ -52,7 +53,7 @@ const IndividualStats = ({collaborator}) => {
 		],
 	};
 
-	// console.log(state);
+	console.log(collaborator);
 
     return (
         <div className="card">
@@ -92,7 +93,7 @@ const IndividualStats = ({collaborator}) => {
 					</div>
 				</div>
 
-				<div className="mb-2">
+				<div className="mb-6">
 					<div id="chartThree" className="mx-auto flex justify-center">
 						<ReactApexChart
 							options={options}
@@ -135,6 +136,24 @@ const IndividualStats = ({collaborator}) => {
 							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
 								<span> Review </span>
 								<span> {collaborator.review} </span>
+							</p>
+						</div>
+					</div>
+					<div className="w-full px-8 sm:w-1/2">
+						<div className="flex w-full items-center">
+							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#AA3333]"></span>
+							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
+								<span> On Time </span>
+								<span> {collaborator.completed.onTime} </span>
+							</p>
+						</div>
+					</div>
+					<div className="w-full px-8 sm:w-1/2">
+						<div className="flex w-full items-center">
+							<span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#6366F1]"></span>
+							<p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
+								<span> Late</span>
+								<span> {collaborator.completed.late} </span>
 							</p>
 						</div>
 					</div>
