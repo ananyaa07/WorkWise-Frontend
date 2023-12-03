@@ -148,7 +148,8 @@ function AnimatedRoutes() {
                 <Route path="/settings/profile" element={<Profile />} />
                 <Route path="/settings/pomodoro" element={<PomodoroPage />} />
                 <Route path="/settings/bookmarks" element={<Bookmarks />} />
-                <Route path="/settings/projects" element={<Projects />} />
+                
+            
               </Route>
               <Route path="/kanban" element={<Kanban />}>
                 <Route path=":section" element={<KanbanSection />} />
